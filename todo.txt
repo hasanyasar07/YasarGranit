@@ -1,0 +1,159 @@
+Create a production-ready Next.js 14 full-stack application using:
+
+- App Router
+- TypeScript
+- Prisma ORM
+- PostgreSQL (Neon database)
+- TailwindCSS
+- Server Actions
+- Zod validation
+- Clean architecture
+- Vercel deployment compatibility
+
+Project name: yasar-granit
+
+Database:
+PostgreSQL (Neon)
+Database name: yasar-granit-db
+
+Architecture Requirements:
+
+1. Folder Structure:
+- app/
+- components/
+- lib/
+- actions/
+- prisma/
+- types/
+- validations/
+
+2. Database Schema (Prisma):
+
+Create the following models:
+
+User:
+- id (uuid)
+- name
+- email (unique)
+- password
+- role (ADMIN)
+- createdAt
+
+Category:
+- id (uuid)
+- name
+- createdAt
+
+Product:
+- id (uuid)
+- name
+- description
+- price (Decimal)
+- imageUrl (string)
+- stock (int, optional)
+- categoryId (relation)
+- createdAt
+
+SiteSettings:
+- id (uuid)
+- whatsappNumber
+- instagramUrl
+- facebookUrl
+- twitterUrl
+- createdAt
+
+Use proper relations and cascading rules.
+No Order or OrderItem models.
+
+3. Authentication:
+- Admin login only
+- Credentials-based authentication
+- bcrypt password hashing
+- Protect admin routes
+
+4. Features:
+
+Public:
+- Homepage with hero section
+- Product listing page
+- Product detail page
+- Category filter
+- WhatsApp “Teklif Al” button on product page
+- Social media icons in footer
+
+Admin:
+- Login page
+- Dashboard
+- Create / Edit / Delete products
+- Category management
+- Update site settings (WhatsApp & social links)
+
+5. WhatsApp Integration:
+
+On product detail page:
+Generate dynamic WhatsApp link like:
+
+https://wa.me/{whatsappNumber}?text=Merhaba,%20{productName}%20ürünü%20için%20bilgi%20almak%20istiyorum.
+
+6. Validation:
+Use Zod for:
+- Product create/update
+- Category create/update
+- Login
+
+7. Image Handling:
+- Do NOT store images in database
+- Store only imageUrl
+- Prepare for external storage (S3, Cloudflare R2, or Vercel Blob)
+
+8. Environment Variables:
+Create .env.example including:
+- DATABASE_URL
+- JWT_SECRET
+- ADMIN_EMAIL
+
+9. Prisma Setup:
+- Include schema.prisma
+- Include migration instructions
+- Neon-compatible configuration
+- Singleton Prisma client pattern
+
+10. Styling:
+- Modern minimal UI
+- Tailwind responsive layout
+- Clean grid-based product listing
+- Elegant footer with social icons
+
+11. SEO:
+- Add metadata support
+- Dynamic product title metadata
+
+12. Production Notes:
+- No Prisma connection leaks
+- Vercel compatible
+- Clean error handling
+
+
+
+# Recommended for most uses
+DATABASE_URL=postgresql://neondb_owner:npg_OoGRzQ4vaHj3@ep-young-darkness-agcri22e-pooler.c-2.eu-central-1.aws.neon.tech/neondb?sslmode=require
+
+# For uses requiring a connection without pgbouncer
+DATABASE_URL_UNPOOLED=postgresql://neondb_owner:npg_OoGRzQ4vaHj3@ep-young-darkness-agcri22e.c-2.eu-central-1.aws.neon.tech/neondb?sslmode=require
+
+# Parameters for constructing your own connection string
+PGHOST=ep-young-darkness-agcri22e-pooler.c-2.eu-central-1.aws.neon.tech
+PGHOST_UNPOOLED=ep-young-darkness-agcri22e.c-2.eu-central-1.aws.neon.tech
+PGUSER=neondb_owner
+PGDATABASE=neondb
+PGPASSWORD=npg_OoGRzQ4vaHj3
+
+# Parameters for Vercel Postgres Templates
+POSTGRES_URL=postgresql://neondb_owner:npg_OoGRzQ4vaHj3@ep-young-darkness-agcri22e-pooler.c-2.eu-central-1.aws.neon.tech/neondb?sslmode=require
+POSTGRES_URL_NON_POOLING=postgresql://neondb_owner:npg_OoGRzQ4vaHj3@ep-young-darkness-agcri22e.c-2.eu-central-1.aws.neon.tech/neondb?sslmode=require
+POSTGRES_USER=neondb_owner
+POSTGRES_HOST=ep-young-darkness-agcri22e-pooler.c-2.eu-central-1.aws.neon.tech
+POSTGRES_PASSWORD=npg_OoGRzQ4vaHj3
+POSTGRES_DATABASE=neondb
+POSTGRES_URL_NO_SSL=postgresql://neondb_owner:npg_OoGRzQ4vaHj3@ep-young-darkness-agcri22e-pooler.c-2.eu-central-1.aws.neon.tech/neondb
+POSTGRES_PRISMA_URL=postgresql://neondb_owner:npg_OoGRzQ4vaHj3@ep-young-darkness-agcri22e-pooler.c-2.eu-central-1.aws.neon.tech/neondb?connect_timeout=15&sslmode=require
