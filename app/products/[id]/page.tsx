@@ -16,7 +16,7 @@ export async function generateMetadata({ params }: { params: Promise<{ id: strin
 
   return {
     title: `${product.name} - Yaşar Granit`,
-    description: product.description,
+    description: `${product.name} - ${product.category.name}`,
   }
 }
 
