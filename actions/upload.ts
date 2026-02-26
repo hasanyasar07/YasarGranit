@@ -26,7 +26,11 @@ export async function uploadImage(formData: FormData) {
   }
 
   try {
-    const blob = await put(file.name, file, {
+    // Benzersiz dosya adı oluştur
+    const timestamp = Date.now()
+    const fileName = `${timestamp}-${file.name}`
+
+    const blob = await put(fileName, file, {
       access: 'public',
     })
 
