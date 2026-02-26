@@ -22,9 +22,9 @@ export default async function DashboardPage() {
         </div>
 
         <div className="bg-white p-6 rounded-lg shadow-md">
-          <h3 className="text-gray-500 text-sm font-medium mb-2">Stokta Ürün</h3>
+          <h3 className="text-gray-500 text-sm font-medium mb-2">Aktif Ürün</h3>
           <p className="text-3xl font-bold text-purple-600">
-            {products.filter((p) => p.stock && p.stock > 0).length}
+            {products.length}
           </p>
         </div>
       </div>

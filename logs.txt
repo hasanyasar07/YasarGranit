@@ -1,96 +1,56 @@
-02:32:01.023 Running build in Washington, D.C., USA (East) – iad1
-02:32:01.023 Build machine configuration: 2 cores, 8 GB
-02:32:01.035 Cloning github.com/hasanyasar07/YasarGranit (Branch: main, Commit: 60751c8)
-02:32:01.036 Skipping build cache, deployment was triggered without cache.
-02:32:01.473 Cloning completed: 438.000ms
-02:32:03.396 Running "vercel build"
-02:32:04.188 Vercel CLI 50.23.2
-02:32:04.549 Installing dependencies...
-02:32:06.969 npm warn deprecated rimraf@3.0.2: Rimraf versions prior to v4 are no longer supported
-02:32:07.454 npm warn deprecated inflight@1.0.6: This module is not supported, and leaks memory. Do not use it. Check out lru-cache if you want a good and tested way to coalesce async requests by a key value, which is much more comprehensive and powerful.
-02:32:08.766 npm warn deprecated @humanwhocodes/config-array@0.13.0: Use @eslint/config-array instead
-02:32:08.792 npm warn deprecated @humanwhocodes/object-schema@2.0.3: Use @eslint/object-schema instead
-02:32:08.831 npm warn deprecated glob@7.2.3: Old versions of glob are not supported, and contain widely publicized security vulnerabilities, which have been fixed in the current version. Please update. Support for old versions may be purchased (at exorbitant rates) by contacting i@izs.me
-02:32:09.845 npm warn deprecated glob@10.3.10: Old versions of glob are not supported, and contain widely publicized security vulnerabilities, which have been fixed in the current version. Please update. Support for old versions may be purchased (at exorbitant rates) by contacting i@izs.me
-02:32:11.773 npm warn deprecated eslint@8.57.1: This version is no longer supported. Please see https://eslint.org/version-support for other options.
-02:32:22.476 
-02:32:22.476 > yasar-granit@0.1.0 postinstall
-02:32:22.477 > prisma generate
-02:32:22.477 
-02:32:23.473 Prisma schema loaded from prisma/schema.prisma
-02:32:23.668 ┌─────────────────────────────────────────────────────────┐
-02:32:23.669 │  Update available 6.19.2 -> 7.4.1                       │
-02:32:23.669 │                                                         │
-02:32:23.669 │  This is a major update - please follow the guide at    │
-02:32:23.670 │  https://pris.ly/d/major-version-upgrade                │
-02:32:23.670 │                                                         │
-02:32:23.670 │  Run the following to update                            │
-02:32:23.670 │    npm i --save-dev prisma@latest                       │
-02:32:23.670 │    npm i @prisma/client@latest                          │
-02:32:23.670 └─────────────────────────────────────────────────────────┘
-02:32:23.671 
-02:32:23.671 ✔ Generated Prisma Client (v6.19.2) to ./node_modules/@prisma/client in 62ms
-02:32:23.671 
-02:32:23.671 Start by importing your Prisma Client (See: https://pris.ly/d/importing-client)
-02:32:23.672 
-02:32:23.672 Tip: Need your database queries to be 1000x faster? Accelerate offers you that and more: https://pris.ly/tip-2-accelerate
-02:32:23.672 
-02:32:23.696 
-02:32:23.696 added 439 packages in 19s
-02:32:23.696 
-02:32:23.696 158 packages are looking for funding
-02:32:23.697   run `npm fund` for details
-02:32:23.734 Detected Next.js version: 14.2.35
-02:32:23.741 Running "npm run build"
-02:32:23.842 
-02:32:23.843 > yasar-granit@0.1.0 build
-02:32:23.843 > next build
-02:32:23.843 
-02:32:24.378 Attention: Next.js now collects completely anonymous telemetry regarding usage.
-02:32:24.379 This information is used to shape Next.js' roadmap and prioritize features.
-02:32:24.379 You can learn more, including how to opt-out if you'd not like to participate in this anonymous program, by visiting the following URL:
-02:32:24.379 https://nextjs.org/telemetry
-02:32:24.380 
-02:32:24.430   ▲ Next.js 14.2.35
-02:32:24.431 
-02:32:24.450    Creating an optimized production build ...
-02:32:36.474 request to https://fonts.googleapis.com/css2?family=Inter:wght@100..900&display=swap failed, reason: 
-02:32:36.474 
-02:32:36.475 Retrying 1/3...
-02:32:39.433  ✓ Compiled successfully
-02:32:39.434    Linting and checking validity of types ...
-02:32:44.883    Collecting page data ...
-02:32:46.302    Generating static pages (0/11) ...
-02:32:46.526    Generating static pages (2/11) 
-02:32:46.668    Generating static pages (5/11) 
-02:32:49.256    Generating static pages (8/11) 
-02:32:49.663  ✓ Generating static pages (11/11)
-02:32:49.819    Finalizing page optimization ...
-02:32:49.819    Collecting build traces ...
-02:32:52.281 
-02:32:52.295 Route (app)                              Size     First Load JS
-02:32:52.296 ┌ ○ /                                    191 B           101 kB
-02:32:52.296 ├ ○ /_not-found                          873 B          88.1 kB
-02:32:52.296 ├ ○ /admin/dashboard                     175 B          96.1 kB
-02:32:52.296 ├ ○ /admin/dashboard/categories          1.79 kB        89.1 kB
-02:32:52.296 ├ ○ /admin/dashboard/products            2.34 kB        89.6 kB
-02:32:52.299 ├ ○ /admin/dashboard/settings            1.47 kB        88.7 kB
-02:32:52.300 ├ ○ /admin/login                         1.25 kB        88.5 kB
-02:32:52.300 ├ ƒ /products                            191 B           101 kB
-02:32:52.300 └ ƒ /products/[id]                       191 B           101 kB
-02:32:52.300 + First Load JS shared by all            87.3 kB
-02:32:52.301   ├ chunks/117-e01e6f67efda6d14.js       31.7 kB
-02:32:52.301   ├ chunks/fd9d1056-9f91b5e418130764.js  53.6 kB
-02:32:52.301   └ other shared chunks (total)          1.89 kB
-02:32:52.301 
-02:32:52.301 
-02:32:52.301 ƒ Middleware                             32.7 kB
-02:32:52.301 
-02:32:52.301 ○  (Static)   prerendered as static content
-02:32:52.301 ƒ  (Dynamic)  server-rendered on demand
-02:32:52.301 
-02:32:52.405 Traced Next.js server files in: 32.366ms
-02:32:52.723 Created all serverless functions in: 318.088ms
-02:32:52.777 Collected static files (public/, static/, .next/static): 4.552ms
-02:32:52.865 Build Completed in /vercel/output [48s]
-02:32:53.011 Deploying outputs...
+04:26:17.250 Running build in Washington, D.C., USA (East) – iad1
+04:26:17.251 Build machine configuration: 2 cores, 8 GB
+04:26:17.402 Cloning github.com/hasanyasar07/YasarGranit (Branch: main, Commit: d03959a)
+04:26:17.713 Cloning completed: 310.000ms
+04:26:19.290 Restored build cache from previous deployment (BgMW6qfzMRRHddFcS45edtMBc8w9)
+04:26:20.477 Running "vercel build"
+04:26:21.046 Vercel CLI 50.23.2
+04:26:21.343 Installing dependencies...
+04:26:22.796 
+04:26:22.796 > yasar-granit@0.1.0 postinstall
+04:26:22.797 > prisma generate
+04:26:22.797 
+04:26:23.765 Prisma schema loaded from prisma/schema.prisma
+04:26:24.007 
+04:26:24.008 ✔ Generated Prisma Client (v6.19.2) to ./node_modules/@prisma/client in 117ms
+04:26:24.008 
+04:26:24.008 Start by importing your Prisma Client (See: https://pris.ly/d/importing-client)
+04:26:24.008 
+04:26:24.009 Tip: Need your database queries to be 1000x faster? Accelerate offers you that and more: https://pris.ly/tip-2-accelerate
+04:26:24.009 
+04:26:24.028 
+04:26:24.029 added 7 packages in 2s
+04:26:24.029 
+04:26:24.029 160 packages are looking for funding
+04:26:24.029   run `npm fund` for details
+04:26:24.058 Detected Next.js version: 14.2.35
+04:26:24.062 Running "npm run build"
+04:26:24.159 
+04:26:24.159 > yasar-granit@0.1.0 build
+04:26:24.160 > next build
+04:26:24.160 
+04:26:24.851   ▲ Next.js 14.2.35
+04:26:24.852 
+04:26:24.869    Creating an optimized production build ...
+04:26:38.706  ✓ Compiled successfully
+04:26:38.707    Linting and checking validity of types ...
+04:26:42.988 
+04:26:42.988 ./app/admin/dashboard/products/page.tsx
+04:26:42.997 161:19  Warning: Using `<img>` could result in slower LCP and higher bandwidth. Consider using `<Image />` from `next/image` to automatically optimize images. This may incur additional usage or cost from your provider. See: https://nextjs.org/docs/messages/no-img-element  @next/next/no-img-element
+04:26:42.998 243:21  Warning: Using `<img>` could result in slower LCP and higher bandwidth. Consider using `<Image />` from `next/image` to automatically optimize images. This may incur additional usage or cost from your provider. See: https://nextjs.org/docs/messages/no-img-element  @next/next/no-img-element
+04:26:42.999 
+04:26:42.999 info  - Need to disable some ESLint rules? Learn more here: https://nextjs.org/docs/basic-features/eslint#disabling-rules
+04:26:44.560 Failed to compile.
+04:26:44.561 
+04:26:44.561 ./app/admin/dashboard/page.tsx:27:39
+04:26:44.561 Type error: Property 'stock' does not exist on type '{ category: { name: string; id: string; createdAt: Date; }; } & { name: string; id: string; createdAt: Date; imageUrl: string; categoryId: string; }'.
+04:26:44.562 
+04:26:44.562 [0m [90m 25 |[39m           [33m<[39m[33mh3[39m className[33m=[39m[32m"text-gray-500 text-sm font-medium mb-2"[39m[33m>[39m[33mStokta[39m [33mÜrün[39m[33m<[39m[33m/[39m[33mh3[39m[33m>[39m[0m
+04:26:44.562 [0m [90m 26 |[39m           [33m<[39m[33mp[39m className[33m=[39m[32m"text-3xl font-bold text-purple-600"[39m[33m>[39m[0m
+04:26:44.562 [0m[31m[1m>[22m[39m[90m 27 |[39m             {products[33m.[39mfilter((p) [33m=>[39m p[33m.[39mstock [33m&&[39m p[33m.[39mstock [33m>[39m [35m0[39m)[33m.[39mlength}[0m
+04:26:44.565 [0m [90m    |[39m                                       [31m[1m^[22m[39m[0m
+04:26:44.566 [0m [90m 28 |[39m           [33m<[39m[33m/[39m[33mp[39m[33m>[39m[0m
+04:26:44.566 [0m [90m 29 |[39m         [33m<[39m[33m/[39m[33mdiv[39m[33m>[39m[0m
+04:26:44.566 [0m [90m 30 |[39m       [33m<[39m[33m/[39m[33mdiv[39m[33m>[39m[0m
+04:26:44.586 Next.js build worker exited with code: 1 and signal: null
+04:26:44.606 Error: Command "npm run build" exited with 1
