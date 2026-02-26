@@ -57,7 +57,6 @@ export default async function ProductsPage({
               key={product.id}
               id={product.id}
               name={product.name}
-              price={product.price.toString()}
               imageUrl={product.imageUrl}
               categoryName={product.category.name}
             />

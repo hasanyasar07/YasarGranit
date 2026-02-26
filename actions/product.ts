@@ -5,35 +5,27 @@ import { productSchema } from '@/validations/product'
 import { revalidatePath } from 'next/cache'
 import { getSession } from '@/lib/auth'
 
-export async function createProduct(formData: FormData) {
+export async function createProduct(name: string, categoryId: string, imageUrl: string) {
   const session = await getSession()
   if (!session) {
     return { error: 'Yetkisiz erişim' }
   }
 
-  const data = {
-    name: formData.get('name') as string,
-    description: formData.get('description') as string,
-    price: formData.get('price') as string,
-    imageUrl: formData.get('imageUrl') as string,
-    stock: formData.get('stock') as string,
-    categoryId: formData.get('categoryId') as string,
-  }
-
-  const result = productSchema.safeParse(data)
+  const result = productSchema.safeParse({ name, categoryId })
 
   if (!result.success) {
     return { error: result.error.issues[0].message }
+  }
+
+  if (!imageUrl) {
+    return { error: 'Resim yüklenmedi' }
   }
 
   try {
     await prisma.product.create({
       data: {
         name: result.data.name,
-        description: result.data.description,
-        price: result.data.price,
-        imageUrl: result.data.imageUrl,
-        stock: result.data.stock ? parseInt(result.data.stock) : null,
+        imageUrl,
         categoryId: result.data.categoryId,
       },
     })
@@ -46,38 +38,32 @@ export async function createProduct(formData: FormData) {
   }
 }
 
-export async function updateProduct(id: string, formData: FormData) {
+export async function updateProduct(id: string, name: string, categoryId: string, imageUrl?: string) {
   const session = await getSession()
   if (!session) {
     return { error: 'Yetkisiz erişim' }
   }
 
-  const data = {
-    name: formData.get('name') as string,
-    description: formData.get('description') as string,
-    price: formData.get('price') as string,
-    imageUrl: formData.get('imageUrl') as string,
-    stock: formData.get('stock') as string,
-    categoryId: formData.get('categoryId') as string,
-  }
-
-  const result = productSchema.safeParse(data)
+  const result = productSchema.safeParse({ name, categoryId })
 
   if (!result.success) {
     return { error: result.error.issues[0].message }
   }
 
   try {
+    const updateData: any = {
+      name: result.data.name,
+      categoryId: result.data.categoryId,
+    }
+
+    // Eğer yeni resim yüklendiyse güncelle
+    if (imageUrl) {
+      updateData.imageUrl = imageUrl
+    }
+
     await prisma.product.update({
       where: { id },
-      data: {
-        name: result.data.name,
-        description: result.data.description,
-        price: result.data.price,
-        imageUrl: result.data.imageUrl,
-        stock: result.data.stock ? parseInt(result.data.stock) : null,
-        categoryId: result.data.categoryId,
-      },
+      data: updateData,
     })
 
     revalidatePath('/products')

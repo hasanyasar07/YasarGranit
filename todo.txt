@@ -157,3 +157,60 @@ POSTGRES_PASSWORD=npg_OoGRzQ4vaHj3
 POSTGRES_DATABASE=neondb
 POSTGRES_URL_NO_SSL=postgresql://neondb_owner:npg_OoGRzQ4vaHj3@ep-young-darkness-agcri22e-pooler.c-2.eu-central-1.aws.neon.tech/neondb
 POSTGRES_PRISMA_URL=postgresql://neondb_owner:npg_OoGRzQ4vaHj3@ep-young-darkness-agcri22e-pooler.c-2.eu-central-1.aws.neon.tech/neondb?connect_timeout=15&sslmode=require
+
+
+echo "# YasarGranit" >> README.md
+git init
+git add README.md
+git commit -m "first commit"
+git branch -M main
+git remote add origin https://github.com/hasanyasar07/YasarGranit.git
+git push -u origin main
+
+
+02:20:11.190 error: Environment variable not found: DATABASE_URL.
+02:20:11.190   -->  schema.prisma:10
+02:20:11.190    | 
+02:20:11.190  9 |   provider = "postgresql"
+02:20:11.190 10 |   url      = env("DATABASE_URL")
+02:20:11.190    | 
+02:20:11.190 Validation Error Count: 1
+02:20:11.194 error: Environment variable not found: DATABASE_URL.
+02:20:11.194   -->  schema.prisma:10
+02:20:11.194    | 
+02:20:11.194  9 |   provider = "postgresql"
+02:20:11.194 10 |   url      = env("DATABASE_URL")
+02:20:11.194    | 
+02:20:11.194 Validation Error Count: 1
+02:20:11.195 error: Environment variable not found: DATABASE_URL.
+02:20:11.195   -->  schema.prisma:10
+02:20:11.195    | 
+02:20:11.195  9 |   provider = "postgresql"
+02:20:11.195 10 |   url      = env("DATABASE_URL")
+02:20:11.195    | 
+02:20:11.195 Validation Error Count: 1
+02:20:11.195 error: Environment variable not found: DATABASE_URL.
+02:20:11.195   -->  schema.prisma:10
+02:20:11.195    | 
+02:20:11.195  9 |   provider = "postgresql"
+02:20:11.195 10 |   url      = env("DATABASE_URL")
+02:20:11.195    | 
+02:20:11.195 Validation Error Count: 1
+02:20:11.267    Generating static pages (8/11) 
+02:20:11.307 error: Environment variable not found: DATABASE_URL.
+02:20:11.307   -->  schema.prisma:10
+02:20:11.307    | 
+02:20:11.307  9 |   provider = "postgresql"
+02:20:11.308 10 |   url      = env("DATABASE_URL")
+02:20:11.308    | 
+02:20:11.308 Validation Error Count: 1
+02:20:11.309 error: Environment variable not found: DATABASE_URL.
+02:20:11.309   -->  schema.prisma:10
+02:20:11.309    | 
+02:20:11.309  9 |   provider = "postgresql"
+02:20:11.310 10 |   url      = env("DATABASE_URL")
+02:20:11.310    | 
+02:20:11.310 Validation Error Count: 1
+02:20:11.380  ✓ Generating static pages (11/11)
+02:20:11.988    Finalizing page optimization ...
+02:20:11.989    Collecting build traces ...

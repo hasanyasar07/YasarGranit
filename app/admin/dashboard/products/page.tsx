@@ -3,15 +3,13 @@
 import { useEffect, useState } from 'react'
 import { getProducts, createProduct, updateProduct, deleteProduct } from '@/actions/product'
 import { getCategories } from '@/actions/category'
+import { uploadImage } from '@/actions/upload'
 import Button from '@/components/Button'
 
 type Product = {
   id: string
   name: string
-  description: string
-  price: { toString: () => string }
   imageUrl: string
-  stock: number | null
   categoryId: string
   category: { name: string }
 }
@@ -27,7 +25,10 @@ export default function ProductsManagementPage() {
   const [showModal, setShowModal] = useState(false)
   const [editingProduct, setEditingProduct] = useState<Product | null>(null)
   const [loading, setLoading] = useState(false)
+  const [uploading, setUploading] = useState(false)
   const [error, setError] = useState('')
+  const [selectedFile, setSelectedFile] = useState<File | null>(null)
+  const [previewUrl, setPreviewUrl] = useState<string>('')
 
   useEffect(() => {
     loadData()
@@ -42,29 +43,68 @@ export default function ProductsManagementPage() {
     setCategories(categoriesData)
   }
 
+  function handleFileChange(e: React.ChangeEvent<HTMLInputElement>) {
+    const file = e.target.files?.[0]
+    if (file) {
+      setSelectedFile(file)
+      // Preview oluştur
+      const reader = new FileReader()
+      reader.onloadend = () => {
+        setPreviewUrl(reader.result as string)
+      }
+      reader.readAsDataURL(file)
+    }
+  }
+
   async function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault()
     setError('')
     setLoading(true)
 
     const formData = new FormData(e.currentTarget)
+    const name = formData.get('name') as string
+    const categoryId = formData.get('categoryId') as string
 
     try {
+      let imageUrl = editingProduct?.imageUrl || ''
+
+      // Yeni dosya seçildiyse yükle
+      if (selectedFile) {
+        setUploading(true)
+        const uploadFormData = new FormData()
+        uploadFormData.append('file', selectedFile)
+
+        const uploadResult = await uploadImage(uploadFormData)
+        setUploading(false)
+
+        if (uploadResult.error) {
+          setError(uploadResult.error)
+          setLoading(false)
+          return
+        }
+
+        imageUrl = uploadResult.url!
+      }
+
+      // Düzenleme mi yoksa yeni ekleme mi?
       const result = editingProduct
-        ? await updateProduct(editingProduct.id, formData)
-        : await createProduct(formData)
+        ? await updateProduct(editingProduct.id, name, categoryId, selectedFile ? imageUrl : undefined)
+        : await createProduct(name, categoryId, imageUrl)
 
       if (result.error) {
         setError(result.error)
       } else {
         setShowModal(false)
         setEditingProduct(null)
+        setSelectedFile(null)
+        setPreviewUrl('')
         await loadData()
       }
     } catch {
       setError('İşlem sırasında bir hata oluştu')
     } finally {
       setLoading(false)
+      setUploading(false)
     }
   }
 
@@ -79,11 +119,27 @@ export default function ProductsManagementPage() {
     }
   }
 
+  function openModal(product?: Product) {
+    if (product) {
+      setEditingProduct(product)
+      setPreviewUrl(product.imageUrl)
+    }
+    setShowModal(true)
+  }
+
+  function closeModal() {
+    setShowModal(false)
+    setEditingProduct(null)
+    setSelectedFile(null)
+    setPreviewUrl('')
+    setError('')
+  }
+
   return (
     <div>
       <div className="flex justify-between items-center mb-8">
         <h1 className="text-3xl font-bold">Ürün Yönetimi</h1>
-        <Button onClick={() => setShowModal(true)}>
+        <Button onClick={() => openModal()}>
           Yeni Ürün Ekle
         </Button>
       </div>
@@ -92,26 +148,23 @@ export default function ProductsManagementPage() {
         <table className="w-full">
           <thead className="bg-gray-50">
             <tr>
+              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Resim</th>
               <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Ürün Adı</th>
               <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Kategori</th>
-              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Fiyat</th>
-              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Stok</th>
               <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">İşlemler</th>
             </tr>
           </thead>
           <tbody className="divide-y divide-gray-200">
             {products.map((product) => (
               <tr key={product.id}>
+                <td className="px-6 py-4">
+                  <img src={product.imageUrl} alt={product.name} className="w-16 h-16 object-cover rounded" />
+                </td>
                 <td className="px-6 py-4">{product.name}</td>
                 <td className="px-6 py-4">{product.category.name}</td>
-                <td className="px-6 py-4">{product.price.toString()} ₺</td>
-                <td className="px-6 py-4">{product.stock ?? '-'}</td>
                 <td className="px-6 py-4">
                   <button
-                    onClick={() => {
-                      setEditingProduct(product)
-                      setShowModal(true)
-                    }}
+                    onClick={() => openModal(product)}
                     className="text-blue-600 hover:text-blue-700 mr-4"
                   >
                     Düzenle
@@ -135,7 +188,7 @@ export default function ProductsManagementPage() {
       {/* Modal */}
       {showModal && (
         <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50">
-          <div className="bg-white rounded-lg p-6 max-w-2xl w-full max-h-[90vh] overflow-y-auto">
+          <div className="bg-white rounded-lg p-6 max-w-md w-full">
             <h2 className="text-2xl font-bold mb-4">
               {editingProduct ? 'Ürün Düzenle' : 'Yeni Ürün Ekle'}
             </h2>
@@ -149,50 +202,6 @@ export default function ProductsManagementPage() {
                     name="name"
                     defaultValue={editingProduct?.name}
                     required
-                    className="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-600"
-                  />
-                </div>
-
-                <div>
-                  <label className="block text-gray-700 font-medium mb-2">Açıklama</label>
-                  <textarea
-                    name="description"
-                    defaultValue={editingProduct?.description}
-                    required
-                    rows={4}
-                    className="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-600"
-                  />
-                </div>
-
-                <div>
-                  <label className="block text-gray-700 font-medium mb-2">Fiyat (₺)</label>
-                  <input
-                    type="number"
-                    name="price"
-                    step="0.01"
-                    defaultValue={editingProduct?.price.toString()}
-                    required
-                    className="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-600"
-                  />
-                </div>
-
-                <div>
-                  <label className="block text-gray-700 font-medium mb-2">Resim URL</label>
-                  <input
-                    type="url"
-                    name="imageUrl"
-                    defaultValue={editingProduct?.imageUrl}
-                    required
-                    className="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-600"
-                  />
-                </div>
-
-                <div>
-                  <label className="block text-gray-700 font-medium mb-2">Stok (İsteğe Bağlı)</label>
-                  <input
-                    type="number"
-                    name="stock"
-                    defaultValue={editingProduct?.stock ?? ''}
                     className="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-600"
                   />
                 </div>
@@ -213,6 +222,27 @@ export default function ProductsManagementPage() {
                     ))}
                   </select>
                 </div>
+
+                <div>
+                  <label className="block text-gray-700 font-medium mb-2">
+                    Ürün Resmi {editingProduct && '(Değiştirmek için yeni resim seçin)'}
+                  </label>
+                  <input
+                    type="file"
+                    accept="image/*"
+                    onChange={handleFileChange}
+                    required={!editingProduct}
+                    className="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-600"
+                  />
+                  <p className="text-sm text-gray-500 mt-1">Maksimum dosya boyutu: 5MB</p>
+                </div>
+
+                {previewUrl && (
+                  <div>
+                    <label className="block text-gray-700 font-medium mb-2">Önizleme</label>
+                    <img src={previewUrl} alt="Preview" className="w-full h-48 object-cover rounded-lg" />
+                  </div>
+                )}
               </div>
 
               {error && (
@@ -222,17 +252,14 @@ export default function ProductsManagementPage() {
               )}
 
               <div className="flex gap-4 mt-6">
-                <Button type="submit" disabled={loading}>
-                  {loading ? 'Kaydediliyor...' : 'Kaydet'}
+                <Button type="submit" disabled={loading || uploading}>
+                  {uploading ? 'Yükleniyor...' : loading ? 'Kaydediliyor...' : 'Kaydet'}
                 </Button>
                 <Button
                   type="button"
                   variant="secondary"
-                  onClick={() => {
-                    setShowModal(false)
-                    setEditingProduct(null)
-                    setError('')
-                  }}
+                  onClick={closeModal}
+                  disabled={loading || uploading}
                 >
                   İptal
                 </Button>

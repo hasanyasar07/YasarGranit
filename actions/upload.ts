@@ -1,0 +1,37 @@
+'use server'
+
+import { put } from '@vercel/blob'
+import { getSession } from '@/lib/auth'
+
+export async function uploadImage(formData: FormData) {
+  const session = await getSession()
+  if (!session) {
+    return { error: 'Yetkisiz erişim' }
+  }
+
+  const file = formData.get('file') as File
+
+  if (!file) {
+    return { error: 'Dosya seçilmedi' }
+  }
+
+  // Dosya tipi kontrolü
+  if (!file.type.startsWith('image/')) {
+    return { error: 'Sadece resim dosyaları yüklenebilir' }
+  }
+
+  // Dosya boyutu kontrolü (max 5MB)
+  if (file.size > 5 * 1024 * 1024) {
+    return { error: 'Dosya boyutu 5MB\'dan küçük olmalıdır' }
+  }
+
+  try {
+    const blob = await put(file.name, file, {
+      access: 'public',
+    })
+
+    return { url: blob.url }
+  } catch (error) {
+    return { error: 'Dosya yüklenirken bir hata oluştu' }
+  }
+}

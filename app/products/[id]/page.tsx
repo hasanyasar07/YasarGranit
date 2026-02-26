@@ -58,19 +58,7 @@ export default async function ProductDetailPage({ params }: { params: Promise<{ 
         {/* Product Info */}
         <div>
           <p className="text-sm text-gray-500 mb-2">{product.category.name}</p>
-          <h1 className="text-4xl font-bold mb-4">{product.name}</h1>
-          <p className="text-3xl font-bold text-blue-600 mb-6">{product.price.toString()} ₺</p>
-
-          {product.stock !== null && (
-            <p className="text-gray-600 mb-6">
-              Stok: <span className="font-semibold">{product.stock} adet</span>
-            </p>
-          )}
-
-          <div className="mb-8">
-            <h2 className="text-xl font-semibold mb-3">Ürün Açıklaması</h2>
-            <p className="text-gray-700 whitespace-pre-line">{product.description}</p>
-          </div>
+          <h1 className="text-4xl font-bold mb-8">{product.name}</h1>
 
           {/* WhatsApp Button */}
           {settings?.whatsappNumber && (

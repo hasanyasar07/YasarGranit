@@ -63,7 +63,6 @@ export default async function DashboardPage() {
                   <p className="font-medium">{product.name}</p>
                   <p className="text-sm text-gray-500">{product.category.name}</p>
                 </div>
-                <p className="font-bold text-blue-600">{product.price.toString()} ₺</p>
               </div>
             ))}
             {products.length === 0 && (
