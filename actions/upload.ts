@@ -32,6 +32,7 @@ export async function uploadImage(formData: FormData) {
 
     return { url: blob.url }
   } catch (error) {
-    return { error: 'Dosya yüklenirken bir hata oluştu' }
+    console.error('Upload error:', error)
+    return { error: `Dosya yüklenirken bir hata oluştu: ${error instanceof Error ? error.message : 'Bilinmeyen hata'}` }
   }
 }
