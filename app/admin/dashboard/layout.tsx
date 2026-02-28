@@ -32,7 +32,7 @@ export default function DashboardLayout({
               <Link
                 key={item.name}
                 href={item.href}
-                className={`block px-6 py-3 text-gray-700 hover:bg-blue-50 hover:text-blue-600 transition-colors ${
+                className={`block px-6 py-3 text-gray-800 font-medium hover:bg-blue-50 hover:text-blue-600 transition-colors ${
                   isActive ? 'bg-blue-50 text-blue-600 border-r-4 border-blue-600' : ''
                 }`}
               >

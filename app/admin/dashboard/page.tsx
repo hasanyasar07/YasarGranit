@@ -8,21 +8,21 @@ export default async function DashboardPage() {
 
   return (
     <div>
-      <h1 className="text-3xl font-bold mb-8">Dashboard</h1>
+      <h1 className="text-3xl font-bold text-gray-900 mb-8">Dashboard</h1>
 
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
         <div className="bg-white p-6 rounded-lg shadow-md">
-          <h3 className="text-gray-500 text-sm font-medium mb-2">Toplam Ürün</h3>
+          <h3 className="text-gray-700 text-sm font-medium mb-2">Toplam Ürün</h3>
           <p className="text-3xl font-bold text-blue-600">{products.length}</p>
         </div>
 
         <div className="bg-white p-6 rounded-lg shadow-md">
-          <h3 className="text-gray-500 text-sm font-medium mb-2">Toplam Kategori</h3>
+          <h3 className="text-gray-700 text-sm font-medium mb-2">Toplam Kategori</h3>
           <p className="text-3xl font-bold text-green-600">{categories.length}</p>
         </div>
 
         <div className="bg-white p-6 rounded-lg shadow-md">
-          <h3 className="text-gray-500 text-sm font-medium mb-2">Aktif Ürün</h3>
+          <h3 className="text-gray-700 text-sm font-medium mb-2">Aktif Ürün</h3>
           <p className="text-3xl font-bold text-purple-600">
             {products.length}
           </p>
@@ -31,7 +31,7 @@ export default async function DashboardPage() {
 
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
         <div className="bg-white p-6 rounded-lg shadow-md">
-          <h2 className="text-xl font-bold mb-4">Hızlı İşlemler</h2>
+          <h2 className="text-xl font-bold text-gray-900 mb-4">Hızlı İşlemler</h2>
           <div className="space-y-3">
             <Link
               href="/admin/dashboard/products"
@@ -55,18 +55,18 @@ export default async function DashboardPage() {
         </div>
 
         <div className="bg-white p-6 rounded-lg shadow-md">
-          <h2 className="text-xl font-bold mb-4">Son Eklenen Ürünler</h2>
+          <h2 className="text-xl font-bold text-gray-900 mb-4">Son Eklenen Ürünler</h2>
           <div className="space-y-3">
             {products.slice(0, 5).map((product) => (
               <div key={product.id} className="flex justify-between items-center border-b pb-2">
                 <div>
-                  <p className="font-medium">{product.name}</p>
-                  <p className="text-sm text-gray-500">{product.category.name}</p>
+                  <p className="font-medium text-gray-900">{product.name}</p>
+                  <p className="text-sm text-gray-600">{product.category.name}</p>
                 </div>
               </div>
             ))}
             {products.length === 0 && (
-              <p className="text-gray-500 text-center">Henüz ürün eklenmemiş</p>
+              <p className="text-gray-600 text-center">Henüz ürün eklenmemiş</p>
             )}
           </div>
         </div>

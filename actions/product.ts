@@ -35,6 +35,7 @@ export async function createProduct(name: string, categoryId: string, imageUrl: 
     revalidatePath('/admin/dashboard')
     return { success: true }
   } catch (error) {
+    console.error('Ürün oluşturma hatası:', error)
     return { error: 'Ürün oluşturulurken bir hata oluştu' }
   }
 }

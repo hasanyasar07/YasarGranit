@@ -103,7 +103,8 @@ export default function ProductsManagementPage() {
         setPreviewUrl('')
         await loadData()
       }
-    } catch {
+    } catch (err) {
+      console.error('handleSubmit hatası:', err)
       setError('İşlem sırasında bir hata oluştu')
     } finally {
       setLoading(false)

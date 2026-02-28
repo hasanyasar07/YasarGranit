@@ -65,7 +65,7 @@ export default function CategoriesManagementPage() {
   return (
     <div>
       <div className="flex justify-between items-center mb-8">
-        <h1 className="text-3xl font-bold">Kategori Yönetimi</h1>
+        <h1 className="text-3xl font-bold text-gray-900">Kategori Yönetimi</h1>
         <Button onClick={() => setShowModal(true)}>
           Yeni Kategori Ekle
         </Button>
@@ -75,14 +75,14 @@ export default function CategoriesManagementPage() {
         <table className="w-full">
           <thead className="bg-gray-50">
             <tr>
-              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Kategori Adı</th>
-              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">İşlemler</th>
+              <th className="px-6 py-3 text-left text-xs font-semibold text-gray-700 uppercase">Kategori Adı</th>
+              <th className="px-6 py-3 text-left text-xs font-semibold text-gray-700 uppercase">İşlemler</th>
             </tr>
           </thead>
           <tbody className="divide-y divide-gray-200">
             {categories.map((category) => (
               <tr key={category.id}>
-                <td className="px-6 py-4">{category.name}</td>
+                <td className="px-6 py-4 text-gray-900 font-medium">{category.name}</td>
                 <td className="px-6 py-4">
                   <button
                     onClick={() => {
@@ -105,7 +105,7 @@ export default function CategoriesManagementPage() {
           </tbody>
         </table>
         {categories.length === 0 && (
-          <p className="text-center py-8 text-gray-500">Henüz kategori bulunmamaktadır</p>
+          <p className="text-center py-8 text-gray-600">Henüz kategori bulunmamaktadır</p>
         )}
       </div>
 
@@ -113,19 +113,19 @@ export default function CategoriesManagementPage() {
       {showModal && (
         <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50">
           <div className="bg-white rounded-lg p-6 max-w-md w-full">
-            <h2 className="text-2xl font-bold mb-4">
+            <h2 className="text-2xl font-bold text-gray-900 mb-4">
               {editingCategory ? 'Kategori Düzenle' : 'Yeni Kategori Ekle'}
             </h2>
 
             <form onSubmit={handleSubmit}>
               <div className="mb-4">
-                <label className="block text-gray-700 font-medium mb-2">Kategori Adı</label>
+                <label className="block text-gray-800 font-semibold mb-2">Kategori Adı</label>
                 <input
                   type="text"
                   name="name"
                   defaultValue={editingCategory?.name}
                   required
-                  className="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-600"
+                  className="w-full px-4 py-2 border rounded-lg text-gray-900 focus:outline-none focus:ring-2 focus:ring-blue-600"
                 />
               </div>
 

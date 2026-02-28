@@ -52,13 +52,13 @@ export default function SettingsPage() {
 
   return (
     <div>
-      <h1 className="text-3xl font-bold mb-8">Site Ayarları</h1>
+      <h1 className="text-3xl font-bold text-gray-900 mb-8">Site Ayarları</h1>
 
       <div className="bg-white rounded-lg shadow-md p-6 max-w-2xl">
         <form onSubmit={handleSubmit}>
           <div className="space-y-4">
             <div>
-              <label className="block text-gray-700 font-medium mb-2">
+              <label className="block text-gray-800 font-semibold mb-2">
                 WhatsApp Numarası *
               </label>
               <input
@@ -67,15 +67,15 @@ export default function SettingsPage() {
                 defaultValue={settings?.whatsappNumber || ''}
                 placeholder="905xxxxxxxxx"
                 required
-                className="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-600"
+                className="w-full px-4 py-2 border rounded-lg text-gray-900 focus:outline-none focus:ring-2 focus:ring-blue-600"
               />
-              <p className="text-sm text-gray-500 mt-1">
+              <p className="text-sm text-gray-600 mt-1">
                 Örnek: 905551234567 (Ülke kodu ile birlikte, başında + olmadan)
               </p>
             </div>
 
             <div>
-              <label className="block text-gray-700 font-medium mb-2">
+              <label className="block text-gray-800 font-semibold mb-2">
                 Instagram URL
               </label>
               <input
@@ -83,12 +83,12 @@ export default function SettingsPage() {
                 name="instagramUrl"
                 defaultValue={settings?.instagramUrl || ''}
                 placeholder="https://instagram.com/username"
-                className="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-600"
+                className="w-full px-4 py-2 border rounded-lg text-gray-900 focus:outline-none focus:ring-2 focus:ring-blue-600"
               />
             </div>
 
             <div>
-              <label className="block text-gray-700 font-medium mb-2">
+              <label className="block text-gray-800 font-semibold mb-2">
                 Facebook URL
               </label>
               <input
@@ -96,12 +96,12 @@ export default function SettingsPage() {
                 name="facebookUrl"
                 defaultValue={settings?.facebookUrl || ''}
                 placeholder="https://facebook.com/username"
-                className="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-600"
+                className="w-full px-4 py-2 border rounded-lg text-gray-900 focus:outline-none focus:ring-2 focus:ring-blue-600"
               />
             </div>
 
             <div>
-              <label className="block text-gray-700 font-medium mb-2">
+              <label className="block text-gray-800 font-semibold mb-2">
                 Twitter URL
               </label>
               <input
@@ -109,7 +109,7 @@ export default function SettingsPage() {
                 name="twitterUrl"
                 defaultValue={settings?.twitterUrl || ''}
                 placeholder="https://twitter.com/username"
-                className="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-600"
+                className="w-full px-4 py-2 border rounded-lg text-gray-900 focus:outline-none focus:ring-2 focus:ring-blue-600"
               />
             </div>
           </div>
