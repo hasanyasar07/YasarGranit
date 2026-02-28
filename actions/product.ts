@@ -5,7 +5,7 @@ import { productSchema } from '@/validations/product'
 import { revalidatePath } from 'next/cache'
 import { getSession } from '@/lib/auth'
 
-export async function createProduct(name: string, categoryId: string, imageUrl: string) {
+export async function createProduct(name: string, categoryId: string, imageUrl: string, favori: boolean = false) {
   const session = await getSession()
   if (!session) {
     return { error: 'Yetkisiz erişim' }
@@ -27,6 +27,7 @@ export async function createProduct(name: string, categoryId: string, imageUrl: 
         name: result.data.name,
         imageUrl,
         categoryId: result.data.categoryId,
+        favori,
       },
     })
 
@@ -38,7 +39,7 @@ export async function createProduct(name: string, categoryId: string, imageUrl: 
   }
 }
 
-export async function updateProduct(id: string, name: string, categoryId: string, imageUrl?: string) {
+export async function updateProduct(id: string, name: string, categoryId: string, imageUrl?: string, favori?: boolean) {
   const session = await getSession()
   if (!session) {
     return { error: 'Yetkisiz erişim' }
@@ -61,6 +62,10 @@ export async function updateProduct(id: string, name: string, categoryId: string
       updateData.imageUrl = imageUrl
     }
 
+    if (favori !== undefined) {
+      updateData.favori = favori
+    }
+
     await prisma.product.update({
       where: { id },
       data: updateData,
@@ -70,6 +75,7 @@ export async function updateProduct(id: string, name: string, categoryId: string
     revalidatePath('/admin/dashboard')
     return { success: true }
   } catch (error) {
+    console.error('Ürün güncelleme hatası:', error)
     return { error: 'Ürün güncellenirken bir hata oluştu' }
   }
 }

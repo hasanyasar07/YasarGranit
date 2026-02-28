@@ -4,7 +4,7 @@ import ProductCard from '@/components/ProductCard'
 
 export default async function HomePage() {
   const products = await getProducts()
-  const featuredProducts = products.slice(0, 6)
+  const featuredProducts = products.filter((p: any) => p.favori)
 
   return (
     <div>

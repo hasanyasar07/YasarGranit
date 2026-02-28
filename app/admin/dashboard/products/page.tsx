@@ -10,6 +10,7 @@ type Product = {
   id: string
   name: string
   imageUrl: string
+  favori: boolean
   categoryId: string
   category: { name: string }
 }
@@ -29,6 +30,7 @@ export default function ProductsManagementPage() {
   const [error, setError] = useState('')
   const [selectedFile, setSelectedFile] = useState<File | null>(null)
   const [previewUrl, setPreviewUrl] = useState<string>('')
+  const [zoomedImage, setZoomedImage] = useState<{ url: string; name: string } | null>(null)
 
   useEffect(() => {
     loadData()
@@ -64,6 +66,7 @@ export default function ProductsManagementPage() {
     const formData = new FormData(e.currentTarget)
     const name = formData.get('name') as string
     const categoryId = formData.get('categoryId') as string
+    const favori = formData.get('favori') === 'on'
 
     try {
       let imageUrl = editingProduct?.imageUrl || ''
@@ -88,8 +91,8 @@ export default function ProductsManagementPage() {
 
       // Düzenleme mi yoksa yeni ekleme mi?
       const result = editingProduct
-        ? await updateProduct(editingProduct.id, name, categoryId, selectedFile ? imageUrl : undefined)
-        : await createProduct(name, categoryId, imageUrl)
+        ? await updateProduct(editingProduct.id, name, categoryId, selectedFile ? imageUrl : undefined, favori)
+        : await createProduct(name, categoryId, imageUrl, favori)
 
       if (result.error) {
         setError(result.error)
@@ -138,7 +141,7 @@ export default function ProductsManagementPage() {
   return (
     <div>
       <div className="flex justify-between items-center mb-8">
-        <h1 className="text-3xl font-bold">Ürün Yönetimi</h1>
+        <h1 className="text-3xl font-bold text-gray-900">Ürün Yönetimi</h1>
         <Button onClick={() => openModal()}>
           Yeni Ürün Ekle
         </Button>
@@ -148,20 +151,31 @@ export default function ProductsManagementPage() {
         <table className="w-full">
           <thead className="bg-gray-50">
             <tr>
-              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Resim</th>
-              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Ürün Adı</th>
-              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Kategori</th>
-              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">İşlemler</th>
+              <th className="px-6 py-3 text-left text-xs font-semibold text-gray-700 uppercase">Resim</th>
+              <th className="px-6 py-3 text-left text-xs font-semibold text-gray-700 uppercase">Ürün Adı</th>
+              <th className="px-6 py-3 text-left text-xs font-semibold text-gray-700 uppercase">Kategori</th>
+              <th className="px-6 py-3 text-left text-xs font-semibold text-gray-700 uppercase">Favori</th>
+              <th className="px-6 py-3 text-left text-xs font-semibold text-gray-700 uppercase">İşlemler</th>
             </tr>
           </thead>
           <tbody className="divide-y divide-gray-200">
             {products.map((product) => (
               <tr key={product.id}>
                 <td className="px-6 py-4">
-                  <img src={product.imageUrl} alt={product.name} className="w-16 h-16 object-cover rounded" />
+                  <img
+                    src={product.imageUrl}
+                    alt={product.name}
+                    className="w-16 h-16 object-cover rounded cursor-pointer hover:opacity-80 transition-opacity"
+                    onClick={() => setZoomedImage({ url: product.imageUrl, name: product.name })}
+                  />
                 </td>
-                <td className="px-6 py-4">{product.name}</td>
-                <td className="px-6 py-4">{product.category.name}</td>
+                <td className="px-6 py-4 text-gray-900 font-medium">{product.name}</td>
+                <td className="px-6 py-4 text-gray-700">{product.category.name}</td>
+                <td className="px-6 py-4">
+                  <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${product.favori ? 'bg-green-100 text-green-800' : 'bg-gray-100 text-gray-800'}`}>
+                    {product.favori ? 'Evet' : 'Hayır'}
+                  </span>
+                </td>
                 <td className="px-6 py-4">
                   <button
                     onClick={() => openModal(product)}
@@ -181,7 +195,7 @@ export default function ProductsManagementPage() {
           </tbody>
         </table>
         {products.length === 0 && (
-          <p className="text-center py-8 text-gray-500">Henüz ürün bulunmamaktadır</p>
+          <p className="text-center py-8 text-gray-600">Henüz ürün bulunmamaktadır</p>
         )}
       </div>
 
@@ -189,30 +203,30 @@ export default function ProductsManagementPage() {
       {showModal && (
         <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50">
           <div className="bg-white rounded-lg p-6 max-w-md w-full">
-            <h2 className="text-2xl font-bold mb-4">
+            <h2 className="text-2xl font-bold text-gray-900 mb-4">
               {editingProduct ? 'Ürün Düzenle' : 'Yeni Ürün Ekle'}
             </h2>
 
             <form onSubmit={handleSubmit}>
               <div className="space-y-4">
                 <div>
-                  <label className="block text-gray-700 font-medium mb-2">Ürün Adı</label>
+                  <label className="block text-gray-800 font-semibold mb-2">Ürün Adı</label>
                   <input
                     type="text"
                     name="name"
                     defaultValue={editingProduct?.name}
                     required
-                    className="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-600"
+                    className="w-full px-4 py-2 border rounded-lg text-gray-900 focus:outline-none focus:ring-2 focus:ring-blue-600"
                   />
                 </div>
 
                 <div>
-                  <label className="block text-gray-700 font-medium mb-2">Kategori</label>
+                  <label className="block text-gray-800 font-semibold mb-2">Kategori</label>
                   <select
                     name="categoryId"
                     defaultValue={editingProduct?.categoryId}
                     required
-                    className="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-600"
+                    className="w-full px-4 py-2 border rounded-lg text-gray-900 focus:outline-none focus:ring-2 focus:ring-blue-600"
                   >
                     <option value="">Kategori Seçin</option>
                     {categories.map((category) => (
@@ -224,7 +238,7 @@ export default function ProductsManagementPage() {
                 </div>
 
                 <div>
-                  <label className="block text-gray-700 font-medium mb-2">
+                  <label className="block text-gray-800 font-semibold mb-2">
                     Ürün Resmi {editingProduct && '(Değiştirmek için yeni resim seçin)'}
                   </label>
                   <input
@@ -232,17 +246,30 @@ export default function ProductsManagementPage() {
                     accept="image/*"
                     onChange={handleFileChange}
                     required={!editingProduct}
-                    className="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-600"
+                    className="w-full px-4 py-2 border rounded-lg text-gray-900 focus:outline-none focus:ring-2 focus:ring-blue-600"
                   />
-                  <p className="text-sm text-gray-500 mt-1">Maksimum dosya boyutu: 5MB</p>
+                  <p className="text-sm text-gray-600 mt-1">Maksimum dosya boyutu: 5MB</p>
                 </div>
 
                 {previewUrl && (
                   <div>
-                    <label className="block text-gray-700 font-medium mb-2">Önizleme</label>
+                    <label className="block text-gray-800 font-semibold mb-2">Önizleme</label>
                     <img src={previewUrl} alt="Preview" className="w-full h-48 object-cover rounded-lg" />
                   </div>
                 )}
+
+                <div className="flex items-center gap-2">
+                  <input
+                    type="checkbox"
+                    name="favori"
+                    id="favori"
+                    defaultChecked={editingProduct?.favori ?? false}
+                    className="w-4 h-4 text-blue-600 border-gray-300 rounded focus:ring-blue-500"
+                  />
+                  <label htmlFor="favori" className="text-gray-800 font-semibold">
+                    Öne Çıkan Ürün (Favori)
+                  </label>
+                </div>
               </div>
 
               {error && (
@@ -265,6 +292,30 @@ export default function ProductsManagementPage() {
                 </Button>
               </div>
             </form>
+          </div>
+        </div>
+      )}
+
+      {/* Resim Büyütme Popup */}
+      {zoomedImage && (
+        <div
+          className="fixed inset-0 bg-black bg-opacity-75 flex items-center justify-center p-4 z-50 cursor-pointer"
+          onClick={() => setZoomedImage(null)}
+        >
+          <div className="relative max-w-3xl max-h-[80vh]">
+            <button
+              onClick={() => setZoomedImage(null)}
+              className="absolute -top-10 right-0 text-white text-3xl font-bold hover:text-gray-300 transition-colors"
+            >
+              &times;
+            </button>
+            <img
+              src={zoomedImage.url}
+              alt={zoomedImage.name}
+              className="max-w-full max-h-[80vh] object-contain rounded-lg"
+              onClick={(e) => e.stopPropagation()}
+            />
+            <p className="text-white text-center mt-3 font-medium">{zoomedImage.name}</p>
           </div>
         </div>
       )}
