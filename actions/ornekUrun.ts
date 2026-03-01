@@ -9,10 +9,13 @@ type OrnekUrunWithProduct = OrnekUrun & {
   product: Product & { category: Category }
 }
 
-export async function getOrnekUrunler(productId?: string): Promise<OrnekUrunWithProduct[]> {
+export async function getOrnekUrunler(productId?: string, categoryId?: string): Promise<OrnekUrunWithProduct[]> {
   try {
     return await prisma.ornekUrun.findMany({
-      where: productId ? { productId } : undefined,
+      where: {
+        ...(productId ? { productId } : {}),
+        ...(categoryId ? { product: { categoryId } } : {}),
+      },
       include: { product: { include: { category: true } } },
       orderBy: { createdAt: 'desc' },
     })

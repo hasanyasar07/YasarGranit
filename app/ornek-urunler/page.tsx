@@ -1,4 +1,5 @@
 import { getOrnekUrunler } from '@/actions/ornekUrun'
+import { getCategories } from '@/actions/category'
 import Image from 'next/image'
 import Link from 'next/link'
 
@@ -10,30 +11,49 @@ export const metadata = {
 export default async function OrnekUrunlerPage({
   searchParams,
 }: {
-  searchParams: Promise<{ product?: string }>
+  searchParams: Promise<{ product?: string; category?: string }>
 }) {
   const params = await searchParams
   const productId = params.product
-  const items = await getOrnekUrunler(productId)
+  const categoryId = params.category
+
+  const [items, categories] = await Promise.all([
+    getOrnekUrunler(productId, categoryId),
+    getCategories(),
+  ])
 
   return (
     <div className="max-w-6xl mx-auto px-4 py-6 md:py-10">
-      <div className="flex items-center justify-between mb-6 md:mb-8">
-        <div>
-          <p className="text-xs font-semibold uppercase tracking-widest text-stone-400 mb-1">Referanslar</p>
-          <h1 className="text-2xl md:text-3xl font-bold text-gray-900">Örnek Ürünler</h1>
-        </div>
-        {productId && (
+      <div className="mb-6 md:mb-8">
+        <p className="text-xs font-semibold uppercase tracking-widest text-stone-400 mb-1">Referanslar</p>
+        <h1 className="text-2xl md:text-3xl font-bold text-gray-900">Örnek Ürünler</h1>
+      </div>
+
+      {/* Kategori filtresi */}
+      <div className="mb-6 flex flex-wrap gap-2">
+        <Link
+          href="/ornek-urunler"
+          className={`px-3 py-1.5 text-xs font-semibold rounded-full border transition-colors ${
+            !categoryId && !productId
+              ? 'bg-stone-900 text-white border-stone-900'
+              : 'bg-white text-gray-600 border-gray-200 hover:border-stone-400'
+          }`}
+        >
+          Tümü
+        </Link>
+        {categories.map((category) => (
           <Link
-            href="/ornek-urunler"
-            className="text-sm font-semibold text-stone-600 hover:text-stone-900 transition-colors flex items-center gap-1"
+            key={category.id}
+            href={`/ornek-urunler?category=${category.id}`}
+            className={`px-3 py-1.5 text-xs font-semibold rounded-full border transition-colors ${
+              categoryId === category.id
+                ? 'bg-stone-900 text-white border-stone-900'
+                : 'bg-white text-gray-600 border-gray-200 hover:border-stone-400'
+            }`}
           >
-            Tümünü gör
-            <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
-            </svg>
+            {category.name}
           </Link>
-        )}
+        ))}
       </div>
 
       {items.length > 0 ? (
@@ -70,7 +90,7 @@ export default async function OrnekUrunlerPage({
         </div>
       ) : (
         <div className="text-center py-20">
-          <p className="text-gray-400 text-base">Henüz örnek ürün bulunmamaktadır.</p>
+          <p className="text-gray-400 text-base">Bu kategoride örnek ürün bulunmamaktadır.</p>
         </div>
       )}
     </div>
