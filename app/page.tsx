@@ -1,4 +1,5 @@
 import Link from 'next/link'
+import Image from 'next/image'
 import { getProducts } from '@/actions/product'
 import ProductCard from '@/components/ProductCard'
 
@@ -11,7 +12,7 @@ export default async function HomePage() {
       {/* Hero Section */}
       <section className="bg-gradient-to-r from-blue-600 to-blue-800 text-white py-20">
         <div className="container mx-auto px-4 text-center">
-          <h1 className="text-5xl font-bold mb-4">Yaşar Granit</h1>
+          <Image src="/logo.png" alt="Yaşar Granit" width={280} height={90} className="object-contain mx-auto mb-4" />
           <p className="text-xl mb-8">Doğal Taş ve Granit Ürünleri ile Mekanlarınıza Değer Katın</p>
           <Link
             href="/products"
