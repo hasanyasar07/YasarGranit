@@ -4,6 +4,9 @@ import { prisma } from '@/lib/prisma'
 import { productSchema } from '@/validations/product'
 import { revalidatePath } from 'next/cache'
 import { getSession } from '@/lib/auth'
+import type { Product, Category } from '@prisma/client'
+
+type ProductWithCategory = Product & { category: Category }
 
 export async function createProduct(name: string, categoryId: string, imageUrl: string, favori: boolean = false) {
   const session = await getSession()
@@ -100,7 +103,7 @@ export async function deleteProduct(id: string) {
   }
 }
 
-export async function getProducts(categoryId?: string) {
+export async function getProducts(categoryId?: string): Promise<ProductWithCategory[]> {
   try {
     const products = await prisma.product.findMany({
       where: categoryId ? { categoryId } : undefined,
