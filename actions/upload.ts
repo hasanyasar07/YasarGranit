@@ -1,6 +1,6 @@
 'use server'
 
-import { put } from '@vercel/blob'
+import { put, del } from '@vercel/blob'
 import { getSession } from '@/lib/auth'
 
 export async function uploadImage(formData: FormData) {
@@ -38,5 +38,13 @@ export async function uploadImage(formData: FormData) {
   } catch (error) {
     console.error('Upload error:', error)
     return { error: `Dosya yüklenirken bir hata oluştu: ${error instanceof Error ? error.message : 'Bilinmeyen hata'}` }
+  }
+}
+
+export async function deleteImage(url: string) {
+  try {
+    await del(url)
+  } catch (error) {
+    console.error('Blob silme hatası:', error)
   }
 }

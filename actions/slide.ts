@@ -3,6 +3,7 @@
 import { prisma } from '@/lib/prisma'
 import { revalidatePath } from 'next/cache'
 import { getSession } from '@/lib/auth'
+import { deleteImage } from './upload'
 
 export async function getSlides() {
   try {
@@ -34,7 +35,11 @@ export async function updateSlide(id: string, text: string, order: number, image
 
   try {
     const data: { text: string; order: number; imageUrl?: string } = { text, order }
-    if (imageUrl) data.imageUrl = imageUrl
+    if (imageUrl) {
+      const existing = await prisma.slide.findUnique({ where: { id } })
+      if (existing?.imageUrl) await deleteImage(existing.imageUrl)
+      data.imageUrl = imageUrl
+    }
 
     await prisma.slide.update({ where: { id }, data })
     revalidatePath('/')
@@ -49,7 +54,9 @@ export async function deleteSlide(id: string) {
   if (!session) return { error: 'Yetkisiz erişim' }
 
   try {
+    const slide = await prisma.slide.findUnique({ where: { id } })
     await prisma.slide.delete({ where: { id } })
+    if (slide?.imageUrl) await deleteImage(slide.imageUrl)
     revalidatePath('/')
     return { success: true }
   } catch {

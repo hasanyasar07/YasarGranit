@@ -5,6 +5,7 @@ import { productSchema } from '@/validations/product'
 import { revalidatePath } from 'next/cache'
 import { getSession } from '@/lib/auth'
 import type { Product, Category } from '@prisma/client'
+import { deleteImage } from './upload'
 
 type ProductWithCategory = Product & { category: Category }
 
@@ -61,8 +62,10 @@ export async function updateProduct(id: string, name: string, categoryId: string
       categoryId: result.data.categoryId,
     }
 
-    // Eğer yeni resim yüklendiyse güncelle
+    // Eğer yeni resim yüklendiyse eski resmi sil, yenisini kaydet
     if (imageUrl) {
+      const existing = await prisma.product.findUnique({ where: { id } })
+      if (existing?.imageUrl) await deleteImage(existing.imageUrl)
       updateData.imageUrl = imageUrl
     }
 
@@ -91,15 +94,29 @@ export async function deleteProduct(id: string) {
   }
 
   try {
-    await prisma.product.delete({
-      where: { id },
-    })
+    const product = await prisma.product.findUnique({ where: { id } })
+    await prisma.product.delete({ where: { id } })
+    if (product?.imageUrl) await deleteImage(product.imageUrl)
 
     revalidatePath('/products')
     revalidatePath('/admin/dashboard')
     return { success: true }
   } catch (error) {
     return { error: 'Ürün silinirken bir hata oluştu' }
+  }
+}
+
+export async function toggleFavori(id: string, favori: boolean) {
+  const session = await getSession()
+  if (!session) return { error: 'Yetkisiz erişim' }
+
+  try {
+    await prisma.product.update({ where: { id }, data: { favori } })
+    revalidatePath('/')
+    revalidatePath('/admin/dashboard')
+    return { success: true }
+  } catch {
+    return { error: 'Güncelleme başarısız' }
   }
 }
 

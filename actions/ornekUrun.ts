@@ -3,6 +3,7 @@
 import { prisma } from '@/lib/prisma'
 import { revalidatePath } from 'next/cache'
 import { getSession } from '@/lib/auth'
+import { deleteImage } from './upload'
 import type { OrnekUrun, Product, Category } from '@prisma/client'
 
 type OrnekUrunWithProduct = OrnekUrun & {
@@ -47,6 +48,7 @@ export async function deleteOrnekUrun(id: string) {
   try {
     const item = await prisma.ornekUrun.findUnique({ where: { id } })
     await prisma.ornekUrun.delete({ where: { id } })
+    if (item?.imageUrl) await deleteImage(item.imageUrl)
     revalidatePath('/ornek-urunler')
     if (item) revalidatePath(`/products/${item.productId}`)
     return { success: true }
