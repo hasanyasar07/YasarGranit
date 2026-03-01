@@ -1,5 +1,6 @@
 import { getProduct } from '@/actions/product'
 import { getSiteSettings } from '@/actions/settings'
+import { getOrnekUrunler } from '@/actions/ornekUrun'
 import Image from 'next/image'
 import { notFound } from 'next/navigation'
 import Link from 'next/link'
@@ -18,8 +19,11 @@ export async function generateMetadata({ params }: { params: Promise<{ id: strin
 
 export default async function ProductDetailPage({ params }: { params: Promise<{ id: string }> }) {
   const { id } = await params
-  const product = await getProduct(id)
-  const settings = await getSiteSettings()
+  const [product, settings, ornekUrunler] = await Promise.all([
+    getProduct(id),
+    getSiteSettings(),
+    getOrnekUrunler(id),
+  ])
 
   if (!product) notFound()
 
@@ -64,6 +68,19 @@ export default async function ProductDetailPage({ params }: { params: Promise<{ 
             Bu ürün hakkında detaylı bilgi ve fiyat teklifi almak için WhatsApp üzerinden bize ulaşabilirsiniz.
           </p>
 
+          {/* Örnek ürünler linki */}
+          {ornekUrunler.length > 0 && (
+            <Link
+              href={`/ornek-urunler?product=${product.id}`}
+              className="inline-flex items-center gap-2 text-sm font-semibold text-stone-700 hover:text-stone-900 bg-stone-100 hover:bg-stone-200 px-4 py-3 rounded-xl transition-colors"
+            >
+              <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
+              </svg>
+              Bu ürüne ait {ornekUrunler.length} örnek çalışma görüntüle
+            </Link>
+          )}
+
           {settings?.whatsappNumber && (
             <a
               href={whatsappLink}
@@ -79,6 +96,39 @@ export default async function ProductDetailPage({ params }: { params: Promise<{ 
           )}
         </div>
       </div>
+
+      {/* Örnek çalışmalar bölümü */}
+      {ornekUrunler.length > 0 && (
+        <div className="mt-12">
+          <div className="flex items-center justify-between mb-6">
+            <div>
+              <p className="text-xs font-semibold uppercase tracking-widest text-stone-400 mb-1">Referanslar</p>
+              <h2 className="text-xl font-bold text-gray-900">Örnek Çalışmalar</h2>
+            </div>
+            <Link
+              href="/ornek-urunler"
+              className="text-sm font-semibold text-stone-600 hover:text-stone-900 transition-colors flex items-center gap-1"
+            >
+              Tümünü gör
+              <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+              </svg>
+            </Link>
+          </div>
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-3 md:gap-4">
+            {ornekUrunler.map((ornek) => (
+              <div key={ornek.id} className="relative h-36 md:h-48 rounded-xl overflow-hidden bg-gray-50 border border-gray-100">
+                <Image
+                  src={ornek.imageUrl}
+                  alt={product.name}
+                  fill
+                  className="object-cover hover:scale-105 transition-transform duration-300"
+                />
+              </div>
+            ))}
+          </div>
+        </div>
+      )}
     </div>
   )
 }
