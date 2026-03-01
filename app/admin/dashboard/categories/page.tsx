@@ -3,6 +3,7 @@
 import { useEffect, useState } from 'react'
 import { getCategories, createCategory, updateCategory, deleteCategory } from '@/actions/category'
 import Button from '@/components/Button'
+import ConfirmModal from '@/components/ConfirmModal'
 
 type Category = {
   id: string
@@ -14,6 +15,8 @@ export default function CategoriesManagementPage() {
   const [showModal, setShowModal] = useState(false)
   const [editingCategory, setEditingCategory] = useState<Category | null>(null)
   const [loading, setLoading] = useState(false)
+  const [deletingId, setDeletingId] = useState<string | null>(null)
+  const [confirmId, setConfirmId] = useState<string | null>(null)
   const [error, setError] = useState('')
 
   useEffect(() => {
@@ -52,9 +55,9 @@ export default function CategoriesManagementPage() {
   }
 
   async function handleDelete(id: string) {
-    if (!confirm('Bu kategoriyi silmek istediğinizden emin misiniz? Bu kategorideki tüm ürünler de silinecektir!')) return
-
+    setDeletingId(id)
     const result = await deleteCategory(id)
+    setDeletingId(null)
     if (result.error) {
       alert(result.error)
     } else {
@@ -94,10 +97,19 @@ export default function CategoriesManagementPage() {
                     Düzenle
                   </button>
                   <button
-                    onClick={() => handleDelete(category.id)}
-                    className="text-red-600 hover:text-red-700"
+                    onClick={() => setConfirmId(category.id)}
+                    disabled={deletingId === category.id}
+                    className="text-red-600 hover:text-red-700 disabled:opacity-50 inline-flex items-center gap-1"
                   >
-                    Sil
+                    {deletingId === category.id ? (
+                      <>
+                        <svg className="animate-spin h-3.5 w-3.5" viewBox="0 0 24 24" fill="none">
+                          <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" />
+                          <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v8H4z" />
+                        </svg>
+                        Siliniyor...
+                      </>
+                    ) : 'Sil'}
                   </button>
                 </td>
               </tr>
@@ -108,6 +120,15 @@ export default function CategoriesManagementPage() {
           <p className="text-center py-8 text-gray-600">Henüz kategori bulunmamaktadır</p>
         )}
       </div>
+
+      {/* Silme Onay Modalı */}
+      {confirmId && (
+        <ConfirmModal
+          message={`"${categories.find((c) => c.id === confirmId)?.name}" kategorisini silmek istediğinizden emin misiniz? Bu kategorideki tüm ürünler de silinecektir.`}
+          onConfirm={() => { const id = confirmId; setConfirmId(null); handleDelete(id) }}
+          onCancel={() => setConfirmId(null)}
+        />
+      )}
 
       {/* Modal */}
       {showModal && (
@@ -137,7 +158,15 @@ export default function CategoriesManagementPage() {
 
               <div className="flex gap-4">
                 <Button type="submit" disabled={loading}>
-                  {loading ? 'Kaydediliyor...' : 'Kaydet'}
+                  <span className="inline-flex items-center gap-2">
+                    {loading && (
+                      <svg className="animate-spin h-4 w-4" viewBox="0 0 24 24" fill="none">
+                        <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" />
+                        <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v8H4z" />
+                      </svg>
+                    )}
+                    {loading ? 'Kaydediliyor...' : 'Kaydet'}
+                  </span>
                 </Button>
                 <Button
                   type="button"

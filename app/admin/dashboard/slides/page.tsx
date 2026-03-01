@@ -4,6 +4,7 @@ import { useEffect, useState } from 'react'
 import { getSlides, createSlide, updateSlide, deleteSlide } from '@/actions/slide'
 import { uploadImage } from '@/actions/upload'
 import Button from '@/components/Button'
+import ConfirmModal from '@/components/ConfirmModal'
 
 type Slide = {
   id: string
@@ -18,6 +19,8 @@ export default function SlidesManagementPage() {
   const [editingSlide, setEditingSlide] = useState<Slide | null>(null)
   const [loading, setLoading] = useState(false)
   const [uploading, setUploading] = useState(false)
+  const [deletingId, setDeletingId] = useState<string | null>(null)
+  const [confirmId, setConfirmId] = useState<string | null>(null)
   const [error, setError] = useState('')
   const [selectedFile, setSelectedFile] = useState<File | null>(null)
   const [previewUrl, setPreviewUrl] = useState<string>('')
@@ -84,8 +87,9 @@ export default function SlidesManagementPage() {
   }
 
   async function handleDelete(id: string) {
-    if (!confirm('Bu slide\'ı silmek istediğinizden emin misiniz?')) return
+    setDeletingId(id)
     const result = await deleteSlide(id)
+    setDeletingId(null)
     if (result.error) alert(result.error)
     else await loadData()
   }
@@ -139,8 +143,20 @@ export default function SlidesManagementPage() {
                   <button onClick={() => openModal(slide)} className="text-blue-600 hover:text-blue-700 mr-4">
                     Düzenle
                   </button>
-                  <button onClick={() => handleDelete(slide.id)} className="text-red-600 hover:text-red-700">
-                    Sil
+                  <button
+                    onClick={() => setConfirmId(slide.id)}
+                    disabled={deletingId === slide.id}
+                    className="text-red-600 hover:text-red-700 disabled:opacity-50 inline-flex items-center gap-1"
+                  >
+                    {deletingId === slide.id ? (
+                      <>
+                        <svg className="animate-spin h-3.5 w-3.5" viewBox="0 0 24 24" fill="none">
+                          <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" />
+                          <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v8H4z" />
+                        </svg>
+                        Siliniyor...
+                      </>
+                    ) : 'Sil'}
                   </button>
                 </td>
               </tr>
@@ -151,6 +167,15 @@ export default function SlidesManagementPage() {
           <p className="text-center py-8 text-gray-600">Henüz slide bulunmamaktadır</p>
         )}
       </div>
+
+      {/* Silme Onay Modalı */}
+      {confirmId && (
+        <ConfirmModal
+          message={`"${slides.find((s) => s.id === confirmId)?.text}" slide'ını silmek istediğinizden emin misiniz?`}
+          onConfirm={() => { const id = confirmId; setConfirmId(null); handleDelete(id) }}
+          onCancel={() => setConfirmId(null)}
+        />
+      )}
 
       {/* Modal */}
       {showModal && (
@@ -213,7 +238,15 @@ export default function SlidesManagementPage() {
 
               <div className="flex gap-4 mt-6">
                 <Button type="submit" disabled={loading || uploading}>
-                  {uploading ? 'Yükleniyor...' : loading ? 'Kaydediliyor...' : 'Kaydet'}
+                  <span className="inline-flex items-center gap-2">
+                    {(loading || uploading) && (
+                      <svg className="animate-spin h-4 w-4" viewBox="0 0 24 24" fill="none">
+                        <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" />
+                        <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v8H4z" />
+                      </svg>
+                    )}
+                    {uploading ? 'Yükleniyor...' : loading ? 'Kaydediliyor...' : 'Kaydet'}
+                  </span>
                 </Button>
                 <Button type="button" variant="secondary" onClick={closeModal} disabled={loading || uploading}>
                   İptal

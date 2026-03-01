@@ -1,10 +1,11 @@
 'use client'
 
 import { useEffect, useState } from 'react'
-import { getProducts, createProduct, updateProduct, deleteProduct } from '@/actions/product'
+import { getProducts, createProduct, updateProduct, deleteProduct, toggleFavori } from '@/actions/product'
 import { getCategories } from '@/actions/category'
 import { uploadImage } from '@/actions/upload'
 import Button from '@/components/Button'
+import ConfirmModal from '@/components/ConfirmModal'
 
 type Product = {
   id: string
@@ -31,6 +32,11 @@ export default function ProductsManagementPage() {
   const [selectedFile, setSelectedFile] = useState<File | null>(null)
   const [previewUrl, setPreviewUrl] = useState<string>('')
   const [zoomedImage, setZoomedImage] = useState<{ url: string; name: string } | null>(null)
+  const [deletingId, setDeletingId] = useState<string | null>(null)
+  const [confirmId, setConfirmId] = useState<string | null>(null)
+  const [togglingId, setTogglingId] = useState<string | null>(null)
+  const [filterCategory, setFilterCategory] = useState('')
+  const [searchQuery, setSearchQuery] = useState('')
 
   useEffect(() => {
     loadData()
@@ -113,9 +119,9 @@ export default function ProductsManagementPage() {
   }
 
   async function handleDelete(id: string) {
-    if (!confirm('Bu ürünü silmek istediğinizden emin misiniz?')) return
-
+    setDeletingId(id)
     const result = await deleteProduct(id)
+    setDeletingId(null)
     if (result.error) {
       alert(result.error)
     } else {
@@ -139,13 +145,49 @@ export default function ProductsManagementPage() {
     setError('')
   }
 
+  const filteredProducts = products.filter((p) => {
+    const matchCategory = filterCategory ? p.categoryId === filterCategory : true
+    const matchSearch = searchQuery ? p.name.toLowerCase().includes(searchQuery.toLowerCase()) : true
+    return matchCategory && matchSearch
+  })
+
   return (
     <div>
-      <div className="flex justify-between items-center mb-8">
+      <div className="flex justify-between items-center mb-6">
         <h1 className="text-3xl font-bold text-gray-900">Ürün Yönetimi</h1>
         <Button onClick={() => openModal()}>
           Yeni Ürün Ekle
         </Button>
+      </div>
+
+      {/* Arama ve filtre */}
+      <div className="flex flex-wrap gap-3 mb-4">
+        <input
+          type="text"
+          placeholder="Ürün adı ara..."
+          value={searchQuery}
+          onChange={(e) => setSearchQuery(e.target.value)}
+          className="px-4 py-2 border rounded-lg text-gray-900 text-sm focus:outline-none focus:ring-2 focus:ring-blue-600 w-56"
+        />
+        <select
+          value={filterCategory}
+          onChange={(e) => setFilterCategory(e.target.value)}
+          className="px-4 py-2 border rounded-lg text-gray-900 text-sm focus:outline-none focus:ring-2 focus:ring-blue-600"
+        >
+          <option value="">Tüm Kategoriler</option>
+          {categories.map((c) => (
+            <option key={c.id} value={c.id}>{c.name}</option>
+          ))}
+        </select>
+        {(searchQuery || filterCategory) && (
+          <button
+            onClick={() => { setSearchQuery(''); setFilterCategory('') }}
+            className="px-4 py-2 text-sm text-gray-600 hover:text-gray-900 border rounded-lg hover:bg-gray-50 transition-colors"
+          >
+            Temizle
+          </button>
+        )}
+        <span className="self-center text-sm text-gray-500">{filteredProducts.length} ürün</span>
       </div>
 
       <div className="bg-white rounded-lg shadow-md overflow-hidden">
@@ -160,7 +202,7 @@ export default function ProductsManagementPage() {
             </tr>
           </thead>
           <tbody className="divide-y divide-gray-200">
-            {products.map((product) => (
+            {filteredProducts.map((product) => (
               <tr key={product.id}>
                 <td className="px-6 py-4">
                   <img
@@ -173,9 +215,26 @@ export default function ProductsManagementPage() {
                 <td className="px-6 py-4 text-gray-900 font-medium">{product.name}</td>
                 <td className="px-6 py-4 text-gray-700">{product.category.name}</td>
                 <td className="px-6 py-4">
-                  <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${product.favori ? 'bg-green-100 text-green-800' : 'bg-gray-100 text-gray-800'}`}>
-                    {product.favori ? 'Evet' : 'Hayır'}
-                  </span>
+                  <button
+                    onClick={async () => {
+                      setTogglingId(product.id)
+                      await toggleFavori(product.id, !product.favori)
+                      await loadData()
+                      setTogglingId(null)
+                    }}
+                    disabled={togglingId === product.id}
+                    className={`relative inline-flex h-6 w-11 items-center rounded-full transition-colors focus:outline-none disabled:opacity-60 ${product.favori ? 'bg-green-500' : 'bg-gray-300'}`}
+                    aria-label="Favori toggle"
+                  >
+                    {togglingId === product.id ? (
+                      <svg className="animate-spin h-3.5 w-3.5 mx-auto text-white" viewBox="0 0 24 24" fill="none">
+                        <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" />
+                        <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v8H4z" />
+                      </svg>
+                    ) : (
+                      <span className={`inline-block h-4 w-4 transform rounded-full bg-white shadow transition-transform ${product.favori ? 'translate-x-6' : 'translate-x-1'}`} />
+                    )}
+                  </button>
                 </td>
                 <td className="px-6 py-4">
                   <button
@@ -185,18 +244,29 @@ export default function ProductsManagementPage() {
                     Düzenle
                   </button>
                   <button
-                    onClick={() => handleDelete(product.id)}
-                    className="text-red-600 hover:text-red-700"
+                    onClick={() => setConfirmId(product.id)}
+                    disabled={deletingId === product.id}
+                    className="text-red-600 hover:text-red-700 disabled:opacity-50 inline-flex items-center gap-1"
                   >
-                    Sil
+                    {deletingId === product.id ? (
+                      <>
+                        <svg className="animate-spin h-3.5 w-3.5" viewBox="0 0 24 24" fill="none">
+                          <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" />
+                          <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v8H4z" />
+                        </svg>
+                        Siliniyor...
+                      </>
+                    ) : 'Sil'}
                   </button>
                 </td>
               </tr>
             ))}
           </tbody>
         </table>
-        {products.length === 0 && (
-          <p className="text-center py-8 text-gray-600">Henüz ürün bulunmamaktadır</p>
+        {filteredProducts.length === 0 && (
+          <p className="text-center py-8 text-gray-600">
+            {searchQuery || filterCategory ? 'Arama kriterlerine uygun ürün bulunamadı' : 'Henüz ürün bulunmamaktadır'}
+          </p>
         )}
       </div>
 
@@ -281,7 +351,15 @@ export default function ProductsManagementPage() {
 
               <div className="flex gap-4 mt-6">
                 <Button type="submit" disabled={loading || uploading}>
-                  {uploading ? 'Yükleniyor...' : loading ? 'Kaydediliyor...' : 'Kaydet'}
+                  <span className="inline-flex items-center gap-2">
+                    {(loading || uploading) && (
+                      <svg className="animate-spin h-4 w-4" viewBox="0 0 24 24" fill="none">
+                        <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" />
+                        <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v8H4z" />
+                      </svg>
+                    )}
+                    {uploading ? 'Yükleniyor...' : loading ? 'Kaydediliyor...' : 'Kaydet'}
+                  </span>
                 </Button>
                 <Button
                   type="button"
@@ -295,6 +373,15 @@ export default function ProductsManagementPage() {
             </form>
           </div>
         </div>
+      )}
+
+      {/* Silme Onay Modalı */}
+      {confirmId && (
+        <ConfirmModal
+          message={`"${products.find((p) => p.id === confirmId)?.name}" ürününü silmek istediğinizden emin misiniz?`}
+          onConfirm={() => { const id = confirmId; setConfirmId(null); handleDelete(id) }}
+          onCancel={() => setConfirmId(null)}
+        />
       )}
 
       {/* Resim Büyütme Popup */}
