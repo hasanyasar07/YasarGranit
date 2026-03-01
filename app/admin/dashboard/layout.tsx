@@ -15,6 +15,7 @@ export default function DashboardLayout({
     { name: 'Dashboard', href: '/admin/dashboard' },
     { name: 'Ürünler', href: '/admin/dashboard/products' },
     { name: 'Kategoriler', href: '/admin/dashboard/categories' },
+    { name: 'Slide Yönetimi', href: '/admin/dashboard/slides' },
     { name: 'Site Ayarları', href: '/admin/dashboard/settings' },
   ]
 

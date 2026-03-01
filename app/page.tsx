@@ -1,15 +1,16 @@
 import Link from 'next/link'
 import { getProducts } from '@/actions/product'
+import { getSlides } from '@/actions/slide'
 import ProductCard from '@/components/ProductCard'
 import HeroSlider from '@/components/HeroSlider'
 
 export default async function HomePage() {
-  const products = await getProducts()
+  const [products, slides] = await Promise.all([getProducts(), getSlides()])
   const featuredProducts = products.filter((p) => p.favori)
 
   return (
     <div>
-      <HeroSlider />
+      <HeroSlider slides={slides} />
 
       {/* Öne Çıkan Ürünler */}
       {featuredProducts.length > 0 && (

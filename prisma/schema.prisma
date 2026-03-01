@@ -44,3 +44,11 @@ model SiteSettings {
   twitterUrl     String?
   createdAt      DateTime @default(now())
 }
+
+model Slide {
+  id        String   @id @default(uuid())
+  imageUrl  String
+  text      String
+  order     Int      @default(0)
+  createdAt DateTime @default(now())
+}
