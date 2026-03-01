@@ -26,9 +26,6 @@ export default function Footer() {
           {/* Logo & Slogan */}
           <div>
             <Image src="/logo.png" alt="Yaşar Granit" width={120} height={38} className="object-contain brightness-0 invert mb-3" />
-            <p className="text-stone-400 text-sm leading-relaxed">
-              1999&apos;dan bu yana kaliteli granit ve doğal taş ürünleri.
-            </p>
           </div>
 
           {/* İletişim */}

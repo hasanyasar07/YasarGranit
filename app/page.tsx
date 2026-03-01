@@ -45,25 +45,6 @@ export default async function HomePage() {
         </section>
       )}
 
-      {/* İstatistikler */}
-      <section className="bg-stone-900 text-white py-10 md:py-14">
-        <div className="max-w-6xl mx-auto px-4">
-          <div className="grid grid-cols-3 divide-x divide-stone-700 text-center">
-            <div className="px-4 py-2">
-              <p className="text-2xl md:text-4xl font-bold text-amber-400">25+</p>
-              <p className="text-xs md:text-sm text-stone-300 mt-1">Yıllık Deneyim</p>
-            </div>
-            <div className="px-4 py-2">
-              <p className="text-2xl md:text-4xl font-bold text-amber-400">500+</p>
-              <p className="text-xs md:text-sm text-stone-300 mt-1">Mutlu Müşteri</p>
-            </div>
-            <div className="px-4 py-2">
-              <p className="text-2xl md:text-4xl font-bold text-amber-400">3</p>
-              <p className="text-xs md:text-sm text-stone-300 mt-1">Ürün Grubu</p>
-            </div>
-          </div>
-        </div>
-      </section>
 
       {/* Hakkımızda */}
       <section className="max-w-6xl mx-auto px-4 py-10 md:py-16">
