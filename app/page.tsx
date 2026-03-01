@@ -9,15 +9,28 @@ export default async function HomePage() {
 
   return (
     <div>
-      {/* Hero Slider */}
       <HeroSlider />
 
-      {/* Featured Products */}
-      <section className="container mx-auto px-4 py-16">
-        <h2 className="text-3xl font-bold text-center mb-12">Öne Çıkan Ürünler</h2>
+      {/* Öne Çıkan Ürünler */}
+      {featuredProducts.length > 0 && (
+        <section className="max-w-6xl mx-auto px-4 py-10 md:py-16">
+          <div className="flex items-center justify-between mb-6 md:mb-10">
+            <div>
+              <p className="text-xs font-semibold uppercase tracking-widest text-stone-400 mb-1">Koleksiyon</p>
+              <h2 className="text-2xl md:text-3xl font-bold text-gray-900">Öne Çıkan Ürünler</h2>
+            </div>
+            <Link
+              href="/products"
+              className="text-sm font-semibold text-stone-600 hover:text-stone-900 transition-colors flex items-center gap-1 shrink-0"
+            >
+              Tümünü gör
+              <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+              </svg>
+            </Link>
+          </div>
 
-        {featuredProducts.length > 0 ? (
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+          <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3 md:gap-6">
             {featuredProducts.map((product) => (
               <ProductCard
                 key={product.id}
@@ -28,30 +41,47 @@ export default async function HomePage() {
               />
             ))}
           </div>
-        ) : (
-          <p className="text-center text-gray-500">Henüz ürün bulunmamaktadır.</p>
-        )}
+        </section>
+      )}
 
-        {featuredProducts.length > 0 && (
-          <div className="text-center mt-12">
-            <Link
-              href="/products"
-              className="inline-block bg-blue-600 text-white px-8 py-3 rounded-lg font-semibold hover:bg-blue-700 transition-colors"
-            >
-              Tüm Ürünleri Görüntüle
-            </Link>
+      {/* İstatistikler */}
+      <section className="bg-stone-900 text-white py-10 md:py-14">
+        <div className="max-w-6xl mx-auto px-4">
+          <div className="grid grid-cols-3 divide-x divide-stone-700 text-center">
+            <div className="px-4 py-2">
+              <p className="text-2xl md:text-4xl font-bold text-amber-400">25+</p>
+              <p className="text-xs md:text-sm text-stone-300 mt-1">Yıllık Deneyim</p>
+            </div>
+            <div className="px-4 py-2">
+              <p className="text-2xl md:text-4xl font-bold text-amber-400">500+</p>
+              <p className="text-xs md:text-sm text-stone-300 mt-1">Mutlu Müşteri</p>
+            </div>
+            <div className="px-4 py-2">
+              <p className="text-2xl md:text-4xl font-bold text-amber-400">3</p>
+              <p className="text-xs md:text-sm text-stone-300 mt-1">Ürün Grubu</p>
+            </div>
           </div>
-        )}
+        </div>
       </section>
 
-      {/* About Section */}
-      <section className="bg-gray-100 py-16">
-        <div className="container mx-auto px-4">
-          <div className="max-w-3xl mx-auto text-center">
-            <p className="text-lg text-gray-700">
-              1999 yılından bu güne kadar yüzlerce müşterimize mermerit, granit ve çimston ürünlerimizle hizmet vermekteyiz. Müşteri memnuniyeti birinci önceliğimiz olduğundan müşteri sayımız her geçen gün katlanarak artmaktadır. Müşterilerimize daha iyi hizmet sunabilmek için sektördeki gelişmeleri yakından takip ediyor, en yeni ürünleri müşterilerimizle buluşturmaktan gurur duyuyoruz. Müşteri memnuniyeti, bizim için önemlidir ve onların memnuniyeti bizim memnuniyetimizdir...
-            </p>
-          </div>
+      {/* Hakkımızda */}
+      <section className="max-w-6xl mx-auto px-4 py-10 md:py-16">
+        <div className="bg-stone-50 rounded-2xl p-6 md:p-10">
+          <p className="text-xs font-semibold uppercase tracking-widest text-stone-400 mb-2">Hakkımızda</p>
+          <ul className="space-y-3 text-gray-700 text-sm md:text-base leading-relaxed">
+            <li className="flex items-start gap-2">
+              <span className="mt-1.5 w-1.5 h-1.5 rounded-full bg-amber-500 shrink-0" />
+              1999 yılından bu yana mermerit, granit ve çimstone ürünlerimizle müşterilerimize kaliteli ve güvenilir hizmet sunmaktayız.
+            </li>
+            <li className="flex items-start gap-2">
+              <span className="mt-1.5 w-1.5 h-1.5 rounded-full bg-amber-500 shrink-0" />
+              Müşteri memnuniyetini her zaman ön planda tutarak, sektördeki yenilikleri yakından takip ediyor ve en güncel ürünleri sizlerle buluşturuyoruz.
+            </li>
+            <li className="flex items-start gap-2">
+              <span className="mt-1.5 w-1.5 h-1.5 rounded-full bg-amber-500 shrink-0" />
+              Kalite, güven ve estetik anlayışımızla yaşam alanlarınıza değer katmaya devam ediyoruz.
+            </li>
+          </ul>
         </div>
       </section>
     </div>

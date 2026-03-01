@@ -19,17 +19,21 @@ export default async function ProductsPage({
   const categories = await getCategories()
 
   return (
-    <div className="container mx-auto px-4 py-8">
-      <h1 className="text-4xl font-bold mb-8">Ürünlerimiz</h1>
+    <div className="max-w-6xl mx-auto px-4 py-6 md:py-10">
+      {/* Başlık */}
+      <div className="mb-6 md:mb-8">
+        <p className="text-xs font-semibold uppercase tracking-widest text-stone-400 mb-1">Katalog</p>
+        <h1 className="text-2xl md:text-3xl font-bold text-gray-900">Ürünlerimiz</h1>
+      </div>
 
-      {/* Category Filter */}
-      <div className="mb-8 flex flex-wrap gap-2">
+      {/* Kategori filtresi */}
+      <div className="mb-6 flex flex-wrap gap-2">
         <Link
           href="/products"
-          className={`px-4 py-2 rounded-lg transition-colors ${
+          className={`px-3 py-1.5 text-xs font-semibold rounded-full border transition-colors ${
             !categoryId
-              ? 'bg-blue-600 text-white'
-              : 'bg-gray-200 text-gray-800 hover:bg-gray-300'
+              ? 'bg-stone-900 text-white border-stone-900'
+              : 'bg-white text-gray-600 border-gray-200 hover:border-stone-400'
           }`}
         >
           Tümü
@@ -38,10 +42,10 @@ export default async function ProductsPage({
           <Link
             key={category.id}
             href={`/products?category=${category.id}`}
-            className={`px-4 py-2 rounded-lg transition-colors ${
+            className={`px-3 py-1.5 text-xs font-semibold rounded-full border transition-colors ${
               categoryId === category.id
-                ? 'bg-blue-600 text-white'
-                : 'bg-gray-200 text-gray-800 hover:bg-gray-300'
+                ? 'bg-stone-900 text-white border-stone-900'
+                : 'bg-white text-gray-600 border-gray-200 hover:border-stone-400'
             }`}
           >
             {category.name}
@@ -49,9 +53,9 @@ export default async function ProductsPage({
         ))}
       </div>
 
-      {/* Products Grid */}
+      {/* Ürün grid */}
       {products.length > 0 ? (
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-8">
+        <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3 md:gap-5">
           {products.map((product) => (
             <ProductCard
               key={product.id}
@@ -63,8 +67,8 @@ export default async function ProductsPage({
           ))}
         </div>
       ) : (
-        <div className="text-center py-16">
-          <p className="text-gray-500 text-lg">Bu kategoride ürün bulunmamaktadır.</p>
+        <div className="text-center py-20">
+          <p className="text-gray-400 text-base">Bu kategoride ürün bulunmamaktadır.</p>
         </div>
       )}
     </div>

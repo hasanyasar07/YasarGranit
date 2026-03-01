@@ -1,10 +1,10 @@
 import type { Metadata } from "next";
-import { Inter } from "next/font/google";
+import { Montserrat } from "next/font/google";
 import "./globals.css";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 
-const inter = Inter({ subsets: ["latin"] });
+const montserrat = Montserrat({ subsets: ["latin"], weight: ["400", "500", "600", "700", "800"] });
 
 export const metadata: Metadata = {
   title: "Yaşar Granit - Doğal Taş ve Granit Ürünleri",
@@ -18,7 +18,7 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="tr">
-      <body className={`${inter.className} flex flex-col min-h-screen`}>
+      <body className={`${montserrat.className} flex flex-col min-h-screen bg-white`}>
         <Navbar />
         <main className="flex-grow">
           {children}
