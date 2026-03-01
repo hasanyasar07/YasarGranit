@@ -1,7 +1,7 @@
 import Link from 'next/link'
-import Image from 'next/image'
 import { getProducts } from '@/actions/product'
 import ProductCard from '@/components/ProductCard'
+import HeroSlider from '@/components/HeroSlider'
 
 export default async function HomePage() {
   const products = await getProducts()
@@ -9,19 +9,8 @@ export default async function HomePage() {
 
   return (
     <div>
-      {/* Hero Section */}
-      <section className="bg-gradient-to-r from-blue-600 to-blue-800 text-white py-20">
-        <div className="container mx-auto px-4 text-center">
-          <Image src="/logo.png" alt="Yaşar Granit" width={280} height={90} className="object-contain mx-auto mb-4" />
-          <p className="text-xl mb-8">Doğal Taş ve Granit Ürünleri ile Mekanlarınıza Değer Katın</p>
-          <Link
-            href="/products"
-            className="inline-block bg-white text-blue-600 px-8 py-3 rounded-lg font-semibold hover:bg-gray-100 transition-colors"
-          >
-            Ürünleri Keşfedin
-          </Link>
-        </div>
-      </section>
+      {/* Hero Slider */}
+      <HeroSlider />
 
       {/* Featured Products */}
       <section className="container mx-auto px-4 py-16">
@@ -59,14 +48,8 @@ export default async function HomePage() {
       <section className="bg-gray-100 py-16">
         <div className="container mx-auto px-4">
           <div className="max-w-3xl mx-auto text-center">
-            <h2 className="text-3xl font-bold mb-6">Hakkımızda</h2>
-            <p className="text-lg text-gray-700 mb-4">
-              Yaşar Granit olarak, doğal taş ve granit ürünleri konusunda uzman kadromuz ile
-              sizlere en kaliteli hizmeti sunmaktayız.
-            </p>
             <p className="text-lg text-gray-700">
-              Mutfak tezgahlarından banyo uygulamalarına, zemin kaplamalarından duvar
-              kaplamasına kadar geniş ürün yelpazemizle mekanlarınıza değer katıyoruz.
+              1999 yılından bu güne kadar yüzlerce müşterimize mermerit, granit ve çimston ürünlerimizle hizmet vermekteyiz. Müşteri memnuniyeti birinci önceliğimiz olduğundan müşteri sayımız her geçen gün katlanarak artmaktadır. Müşterilerimize daha iyi hizmet sunabilmek için sektördeki gelişmeleri yakından takip ediyor, en yeni ürünleri müşterilerimizle buluşturmaktan gurur duyuyoruz. Müşteri memnuniyeti, bizim için önemlidir ve onların memnuniyeti bizim memnuniyetimizdir...
             </p>
           </div>
         </div>
