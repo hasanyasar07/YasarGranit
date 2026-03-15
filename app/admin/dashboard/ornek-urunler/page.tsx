@@ -5,7 +5,6 @@ import { getOrnekUrunler, createOrnekUrun, deleteOrnekUrun } from '@/actions/orn
 import { getCategories } from '@/actions/category'
 import { getProducts } from '@/actions/product'
 import { uploadImage } from '@/actions/upload'
-import Button from '@/components/Button'
 import ConfirmModal from '@/components/ConfirmModal'
 
 type OrnekUrun = {
@@ -13,9 +12,17 @@ type OrnekUrun = {
   imageUrl: string
   product: { id: string; name: string; category: { name: string } }
 }
-
 type Category = { id: string; name: string }
 type Product = { id: string; name: string; categoryId: string }
+
+function Spinner({ small }: { small?: boolean }) {
+  return (
+    <svg className={`animate-spin ${small ? 'h-3.5 w-3.5' : 'h-4 w-4'}`} viewBox="0 0 24 24" fill="none">
+      <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" />
+      <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v8H4z" />
+    </svg>
+  )
+}
 
 export default function OrnekUrunlerAdminPage() {
   const [items, setItems] = useState<OrnekUrun[]>([])
@@ -37,15 +44,12 @@ export default function OrnekUrunlerAdminPage() {
   const [searchQuery, setSearchQuery] = useState('')
   const [productSearch, setProductSearch] = useState('')
   const [productDropdownOpen, setProductDropdownOpen] = useState(false)
+  const [zoomedImage, setZoomedImage] = useState<string | null>(null)
 
   useEffect(() => { loadData() }, [])
 
   async function loadData() {
-    const [ornekler, cats, prods] = await Promise.all([
-      getOrnekUrunler(),
-      getCategories(),
-      getProducts(),
-    ])
+    const [ornekler, cats, prods] = await Promise.all([getOrnekUrunler(), getCategories(), getProducts()])
     setItems(ornekler)
     setCategories(cats)
     setProducts(prods)
@@ -72,10 +76,8 @@ export default function OrnekUrunlerAdminPage() {
   async function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault()
     setError('')
-
     if (!selectedProductId) { setError('Ürün seçiniz'); return }
     if (!selectedFile) { setError('Resim seçiniz'); return }
-
     setLoading(true)
     try {
       setUploading(true)
@@ -83,16 +85,10 @@ export default function OrnekUrunlerAdminPage() {
       uploadFormData.append('file', selectedFile)
       const uploadResult = await uploadImage(uploadFormData)
       setUploading(false)
-
       if (uploadResult.error) { setError(uploadResult.error); return }
-
       const result = await createOrnekUrun(selectedProductId, uploadResult.url!)
-      if (result.error) {
-        setError(result.error)
-      } else {
-        closeModal()
-        await loadData()
-      }
+      if (result.error) { setError(result.error) }
+      else { closeModal(); await loadData() }
     } catch {
       setError('İşlem sırasında bir hata oluştu')
     } finally {
@@ -129,88 +125,88 @@ export default function OrnekUrunlerAdminPage() {
 
   return (
     <div>
-      <div className="flex justify-between items-center mb-6">
-        <h1 className="text-3xl font-bold text-gray-900">Örnek Ürün Yönetimi</h1>
-        <Button onClick={() => setShowModal(true)}>Yeni Örnek Ürün Ekle</Button>
+      {/* Header */}
+      <div className="flex items-center justify-between mb-4">
+        <h1 className="text-xl font-bold text-gray-900">Örnek Ürünler</h1>
+        <button
+          onClick={() => setShowModal(true)}
+          className="flex items-center gap-2 bg-blue-600 text-white px-4 py-2 rounded-xl font-semibold text-sm active:bg-blue-700"
+        >
+          <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" />
+          </svg>
+          Ekle
+        </button>
       </div>
 
-      {/* Arama ve filtre */}
-      <div className="flex flex-wrap gap-3 mb-4">
+      {/* Filters */}
+      <div className="space-y-2 mb-4">
         <input
           type="text"
           placeholder="Ürün adı ara..."
           value={searchQuery}
           onChange={(e) => setSearchQuery(e.target.value)}
-          className="px-4 py-2 border rounded-lg text-gray-900 text-sm focus:outline-none focus:ring-2 focus:ring-blue-600 w-56"
+          className="w-full px-4 py-2.5 border border-gray-200 rounded-xl text-gray-900 text-sm bg-white focus:outline-none focus:ring-2 focus:ring-blue-500"
         />
-        <select
-          value={filterCategory}
-          onChange={(e) => setFilterCategory(e.target.value)}
-          className="px-4 py-2 border rounded-lg text-gray-900 text-sm focus:outline-none focus:ring-2 focus:ring-blue-600"
-        >
-          <option value="">Tüm Kategoriler</option>
-          {categories.map((c) => (
-            <option key={c.id} value={c.id}>{c.name}</option>
-          ))}
-        </select>
-        {(searchQuery || filterCategory) && (
-          <button
-            onClick={() => { setSearchQuery(''); setFilterCategory('') }}
-            className="px-4 py-2 text-sm text-gray-600 hover:text-gray-900 border rounded-lg hover:bg-gray-50 transition-colors"
+        <div className="flex gap-2">
+          <select
+            value={filterCategory}
+            onChange={(e) => setFilterCategory(e.target.value)}
+            className="flex-1 px-3 py-2.5 border border-gray-200 rounded-xl text-gray-900 text-sm bg-white focus:outline-none focus:ring-2 focus:ring-blue-500"
           >
-            Temizle
-          </button>
-        )}
-        <span className="self-center text-sm text-gray-500">{filteredItems.length} kayıt</span>
+            <option value="">Tüm Kategoriler</option>
+            {categories.map((c) => <option key={c.id} value={c.id}>{c.name}</option>)}
+          </select>
+          {(searchQuery || filterCategory) && (
+            <button
+              onClick={() => { setSearchQuery(''); setFilterCategory('') }}
+              className="px-3 py-2.5 text-sm text-gray-600 border border-gray-200 rounded-xl bg-white"
+            >
+              Temizle
+            </button>
+          )}
+        </div>
+        <p className="text-xs text-gray-400 pl-1">{filteredItems.length} kayıt</p>
       </div>
 
-      <div className="bg-white rounded-lg shadow-md overflow-hidden">
-        <table className="w-full">
-          <thead className="bg-gray-50">
-            <tr>
-              <th className="px-6 py-3 text-left text-xs font-semibold text-gray-700 uppercase">Resim</th>
-              <th className="px-6 py-3 text-left text-xs font-semibold text-gray-700 uppercase">Ürün</th>
-              <th className="px-6 py-3 text-left text-xs font-semibold text-gray-700 uppercase">Kategori</th>
-              <th className="px-6 py-3 text-left text-xs font-semibold text-gray-700 uppercase">İşlemler</th>
-            </tr>
-          </thead>
-          <tbody className="divide-y divide-gray-200">
-            {filteredItems.map((item) => (
-              <tr key={item.id}>
-                <td className="px-6 py-4">
-                  <img src={item.imageUrl} alt="" className="w-20 h-14 object-cover rounded" />
-                </td>
-                <td className="px-6 py-4 text-gray-900 font-medium">{item.product.name}</td>
-                <td className="px-6 py-4 text-gray-700">{item.product.category.name}</td>
-                <td className="px-6 py-4">
-                  <button
-                    onClick={() => setConfirmId(item.id)}
-                    disabled={deletingId === item.id}
-                    className="text-red-600 hover:text-red-700 disabled:opacity-50 inline-flex items-center gap-1"
-                  >
-                    {deletingId === item.id ? (
-                      <>
-                        <svg className="animate-spin h-3.5 w-3.5" viewBox="0 0 24 24" fill="none">
-                          <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" />
-                          <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v8H4z" />
-                        </svg>
-                        Siliniyor...
-                      </>
-                    ) : 'Sil'}
-                  </button>
-                </td>
-              </tr>
-            ))}
-          </tbody>
-        </table>
-        {filteredItems.length === 0 && (
-          <p className="text-center py-8 text-gray-600">
-            {searchQuery || filterCategory ? 'Arama kriterlerine uygun kayıt bulunamadı' : 'Henüz örnek ürün bulunmamaktadır'}
-          </p>
-        )}
-      </div>
+      {/* Grid */}
+      {filteredItems.length === 0 ? (
+        <div className="bg-white rounded-xl p-10 text-center text-gray-400 text-sm">
+          {searchQuery || filterCategory ? 'Sonuç bulunamadı' : 'Henüz örnek ürün eklenmemiş'}
+        </div>
+      ) : (
+        <div className="grid grid-cols-2 gap-3">
+          {filteredItems.map((item) => (
+            <div key={item.id} className="bg-white rounded-xl shadow-sm overflow-hidden">
+              <div className="relative">
+                <img
+                  src={item.imageUrl}
+                  alt={item.product.name}
+                  className="w-full h-32 object-cover cursor-pointer active:opacity-80"
+                  onClick={() => setZoomedImage(item.imageUrl)}
+                />
+                <button
+                  onClick={() => setConfirmId(item.id)}
+                  disabled={deletingId === item.id}
+                  className="absolute top-1.5 right-1.5 w-7 h-7 bg-red-500 rounded-full flex items-center justify-center disabled:opacity-50 active:bg-red-600"
+                >
+                  {deletingId === item.id ? <Spinner small /> : (
+                    <svg className="w-3.5 h-3.5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M6 18L18 6M6 6l12 12" />
+                    </svg>
+                  )}
+                </button>
+              </div>
+              <div className="px-2.5 py-2">
+                <p className="text-xs font-semibold text-gray-900 truncate">{item.product.name}</p>
+                <p className="text-xs text-gray-400 truncate">{item.product.category.name}</p>
+              </div>
+            </div>
+          ))}
+        </div>
+      )}
 
-      {/* Silme Onay Modalı */}
+      {/* Confirm */}
       {confirmId && (
         <ConfirmModal
           message={`"${items.find((i) => i.id === confirmId)?.product.name}" ürününe ait bu örnek resmi silmek istediğinizden emin misiniz?`}
@@ -219,38 +215,52 @@ export default function OrnekUrunlerAdminPage() {
         />
       )}
 
-      {/* Modal */}
-      {showModal && (
-        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50">
-          <div className="bg-white rounded-lg p-6 max-w-md w-full">
-            <h2 className="text-2xl font-bold text-gray-900 mb-4">Yeni Örnek Ürün Ekle</h2>
+      {/* Image Zoom */}
+      {zoomedImage && (
+        <div
+          className="fixed inset-0 bg-black/80 flex items-center justify-center p-4 z-50"
+          onClick={() => setZoomedImage(null)}
+        >
+          <img
+            src={zoomedImage}
+            alt=""
+            className="w-full max-w-sm rounded-xl object-contain"
+            onClick={(e) => e.stopPropagation()}
+          />
+        </div>
+      )}
 
+      {/* Bottom Sheet Modal */}
+      {showModal && (
+        <div className="fixed inset-0 z-50 flex flex-col justify-end">
+          <div className="absolute inset-0 bg-black/50" onClick={closeModal} />
+          <div className="relative bg-white rounded-t-2xl px-4 pt-4 pb-8 max-h-[92vh] overflow-y-auto safe-area-bottom">
+            <div className="w-10 h-1 bg-gray-300 rounded-full mx-auto mb-4" />
+            <h2 className="text-lg font-bold text-gray-900 mb-5">Yeni Örnek Ürün Ekle</h2>
             <form onSubmit={handleSubmit}>
               <div className="space-y-4">
-                {/* Kategori seç */}
+                {/* Kategori */}
                 <div>
-                  <label className="block text-gray-800 font-semibold mb-2">Kategori</label>
+                  <label className="block text-sm font-semibold text-gray-700 mb-1.5">Kategori</label>
                   <select
                     value={selectedCategoryId}
                     onChange={(e) => handleCategoryChange(e.target.value)}
                     required
-                    className="w-full px-4 py-2 border rounded-lg text-gray-900 focus:outline-none focus:ring-2 focus:ring-blue-600"
+                    className="w-full px-4 py-3 border border-gray-300 rounded-xl text-gray-900 text-base focus:outline-none focus:ring-2 focus:ring-blue-500"
                   >
                     <option value="">Kategori Seçin</option>
-                    {categories.map((c) => (
-                      <option key={c.id} value={c.id}>{c.name}</option>
-                    ))}
+                    {categories.map((c) => <option key={c.id} value={c.id}>{c.name}</option>)}
                   </select>
                 </div>
 
-                {/* Ürün seç */}
+                {/* Ürün dropdown */}
                 <div className="relative">
-                  <label className="block text-gray-800 font-semibold mb-2">Ürün</label>
+                  <label className="block text-sm font-semibold text-gray-700 mb-1.5">Ürün</label>
                   <button
                     type="button"
                     disabled={!selectedCategoryId}
                     onClick={() => setProductDropdownOpen((v) => !v)}
-                    className="w-full px-4 py-2 border rounded-lg text-left text-gray-900 focus:outline-none focus:ring-2 focus:ring-blue-600 disabled:bg-gray-100 disabled:text-gray-400 flex justify-between items-center"
+                    className="w-full px-4 py-3 border border-gray-300 rounded-xl text-left text-base focus:outline-none focus:ring-2 focus:ring-blue-500 disabled:bg-gray-50 disabled:text-gray-400 flex justify-between items-center"
                   >
                     <span className={selectedProductId ? 'text-gray-900' : 'text-gray-400'}>
                       {selectedProductId
@@ -261,9 +271,8 @@ export default function OrnekUrunlerAdminPage() {
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
                     </svg>
                   </button>
-
                   {productDropdownOpen && selectedCategoryId && (
-                    <div className="absolute z-20 w-full mt-1 bg-white border border-gray-200 rounded-lg shadow-lg">
+                    <div className="absolute z-20 w-full mt-1 bg-white border border-gray-200 rounded-xl shadow-lg">
                       <div className="p-2 border-b border-gray-100">
                         <input
                           type="text"
@@ -271,7 +280,7 @@ export default function OrnekUrunlerAdminPage() {
                           value={productSearch}
                           onChange={(e) => setProductSearch(e.target.value)}
                           autoFocus
-                          className="w-full px-3 py-1.5 text-sm border rounded-md text-gray-900 focus:outline-none focus:ring-2 focus:ring-blue-600"
+                          className="w-full px-3 py-2 text-sm border border-gray-200 rounded-lg text-gray-900 focus:outline-none focus:ring-2 focus:ring-blue-500"
                         />
                       </div>
                       <ul className="max-h-48 overflow-y-auto">
@@ -280,12 +289,8 @@ export default function OrnekUrunlerAdminPage() {
                           .map((p) => (
                             <li
                               key={p.id}
-                              onClick={() => {
-                                setSelectedProductId(p.id)
-                                setProductDropdownOpen(false)
-                                setProductSearch('')
-                              }}
-                              className={`px-4 py-2 text-sm cursor-pointer hover:bg-blue-50 transition-colors ${selectedProductId === p.id ? 'bg-blue-50 text-blue-700 font-medium' : 'text-gray-800'}`}
+                              onClick={() => { setSelectedProductId(p.id); setProductDropdownOpen(false); setProductSearch('') }}
+                              className={`px-4 py-3 text-sm cursor-pointer active:bg-blue-50 ${selectedProductId === p.id ? 'bg-blue-50 text-blue-700 font-medium' : 'text-gray-800'}`}
                             >
                               {p.name}
                             </li>
@@ -300,44 +305,38 @@ export default function OrnekUrunlerAdminPage() {
 
                 {/* Resim */}
                 <div>
-                  <label className="block text-gray-800 font-semibold mb-2">Örnek Resim</label>
+                  <label className="block text-sm font-semibold text-gray-700 mb-1.5">Örnek Resim</label>
                   <input
                     type="file"
                     accept="image/*"
                     onChange={handleFileChange}
                     required
-                    className="w-full px-4 py-2 border rounded-lg text-gray-900 focus:outline-none focus:ring-2 focus:ring-blue-600"
+                    className="w-full text-sm text-gray-500 file:mr-3 file:py-2 file:px-4 file:rounded-lg file:border-0 file:text-sm file:font-semibold file:bg-blue-50 file:text-blue-700"
                   />
-                  <p className="text-sm text-gray-600 mt-1">Maksimum dosya boyutu: 5MB</p>
+                  <p className="text-xs text-gray-400 mt-1">Maks. 5MB</p>
                 </div>
-
                 {previewUrl && (
-                  <div>
-                    <label className="block text-gray-800 font-semibold mb-2">Önizleme</label>
-                    <img src={previewUrl} alt="Preview" className="w-full h-40 object-cover rounded-lg" />
-                  </div>
+                  <img src={previewUrl} alt="Önizleme" className="w-full h-44 object-cover rounded-xl" />
                 )}
               </div>
-
-              {error && (
-                <div className="mt-4 p-3 bg-red-100 text-red-700 rounded-lg">{error}</div>
-              )}
-
-              <div className="flex gap-4 mt-6">
-                <Button type="submit" disabled={loading || uploading}>
-                  <span className="inline-flex items-center gap-2">
-                    {(loading || uploading) && (
-                      <svg className="animate-spin h-4 w-4" viewBox="0 0 24 24" fill="none">
-                        <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" />
-                        <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v8H4z" />
-                      </svg>
-                    )}
-                    {uploading ? 'Yükleniyor...' : loading ? 'Kaydediliyor...' : 'Kaydet'}
-                  </span>
-                </Button>
-                <Button type="button" variant="secondary" onClick={closeModal} disabled={loading || uploading}>
+              {error && <p className="mt-4 p-3 bg-red-50 text-red-600 rounded-xl text-sm">{error}</p>}
+              <div className="flex gap-3 mt-6">
+                <button
+                  type="submit"
+                  disabled={loading || uploading}
+                  className="flex-1 bg-blue-600 text-white py-3 rounded-xl font-semibold text-base disabled:opacity-60 flex items-center justify-center gap-2"
+                >
+                  {(loading || uploading) && <Spinner />}
+                  {uploading ? 'Yükleniyor...' : loading ? 'Kaydediliyor...' : 'Kaydet'}
+                </button>
+                <button
+                  type="button"
+                  onClick={closeModal}
+                  disabled={loading || uploading}
+                  className="flex-1 bg-gray-100 text-gray-700 py-3 rounded-xl font-semibold text-base"
+                >
                   İptal
-                </Button>
+                </button>
               </div>
             </form>
           </div>

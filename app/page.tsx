@@ -17,7 +17,6 @@ export default async function HomePage() {
         <section className="max-w-6xl mx-auto px-4 py-10 md:py-16">
           <div className="flex items-center justify-between mb-6 md:mb-10">
             <div>
-              <p className="text-xs font-semibold uppercase tracking-widest text-stone-400 mb-1">Koleksiyon</p>
               <h2 className="text-2xl md:text-3xl font-bold text-gray-900">Öne Çıkan Ürünler</h2>
             </div>
             <Link

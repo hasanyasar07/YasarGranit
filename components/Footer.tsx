@@ -2,7 +2,6 @@
 
 import { useEffect, useState } from 'react'
 import { getSiteSettings } from '@/actions/settings'
-import Image from 'next/image'
 import Link from 'next/link'
 
 type Settings = {
@@ -22,12 +21,7 @@ export default function Footer() {
   return (
     <footer className="bg-stone-900 text-white">
       <div className="max-w-6xl mx-auto px-4 py-8 md:py-12">
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-          {/* Logo & Slogan */}
-          <div>
-            <Image src="/logo.png" alt="Yaşar Granit" width={120} height={38} className="object-contain brightness-0 invert mb-3" />
-          </div>
-
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
           {/* İletişim */}
           <div>
             <h4 className="text-xs font-semibold uppercase tracking-widest text-stone-400 mb-3">İletişim</h4>

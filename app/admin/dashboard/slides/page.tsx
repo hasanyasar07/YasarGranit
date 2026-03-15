@@ -3,7 +3,6 @@
 import { useEffect, useState } from 'react'
 import { getSlides, createSlide, updateSlide, deleteSlide } from '@/actions/slide'
 import { uploadImage } from '@/actions/upload'
-import Button from '@/components/Button'
 import ConfirmModal from '@/components/ConfirmModal'
 
 type Slide = {
@@ -11,6 +10,15 @@ type Slide = {
   imageUrl: string
   text: string
   order: number
+}
+
+function Spinner({ small }: { small?: boolean }) {
+  return (
+    <svg className={`animate-spin ${small ? 'h-3.5 w-3.5' : 'h-4 w-4'}`} viewBox="0 0 24 24" fill="none">
+      <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" />
+      <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v8H4z" />
+    </svg>
+  )
 }
 
 export default function SlidesManagementPage() {
@@ -45,39 +53,25 @@ export default function SlidesManagementPage() {
     e.preventDefault()
     setError('')
     setLoading(true)
-
     const formData = new FormData(e.currentTarget)
     const text = formData.get('text') as string
     const order = parseInt(formData.get('order') as string) || 0
-
     try {
       let imageUrl = editingSlide?.imageUrl || ''
-
       if (selectedFile) {
         setUploading(true)
         const uploadFormData = new FormData()
         uploadFormData.append('file', selectedFile)
         const uploadResult = await uploadImage(uploadFormData)
         setUploading(false)
-
-        if (uploadResult.error) {
-          setError(uploadResult.error)
-          setLoading(false)
-          return
-        }
+        if (uploadResult.error) { setError(uploadResult.error); setLoading(false); return }
         imageUrl = uploadResult.url!
       }
-
       const result = editingSlide
         ? await updateSlide(editingSlide.id, text, order, selectedFile ? imageUrl : undefined)
         : await createSlide(imageUrl, text, order)
-
-      if (result.error) {
-        setError(result.error)
-      } else {
-        closeModal()
-        await loadData()
-      }
+      if (result.error) { setError(result.error) }
+      else { closeModal(); await loadData() }
     } catch {
       setError('İşlem sırasında bir hata oluştu')
     } finally {
@@ -95,10 +89,7 @@ export default function SlidesManagementPage() {
   }
 
   function openModal(slide?: Slide) {
-    if (slide) {
-      setEditingSlide(slide)
-      setPreviewUrl(slide.imageUrl)
-    }
+    if (slide) { setEditingSlide(slide); setPreviewUrl(slide.imageUrl) }
     setShowModal(true)
   }
 
@@ -112,63 +103,65 @@ export default function SlidesManagementPage() {
 
   return (
     <div>
-      <div className="flex justify-between items-center mb-8">
-        <h1 className="text-3xl font-bold text-gray-900">Slide Yönetimi</h1>
-        <Button onClick={() => openModal()}>Yeni Slide Ekle</Button>
+      {/* Header */}
+      <div className="flex items-center justify-between mb-5">
+        <h1 className="text-xl font-bold text-gray-900">Slide Yönetimi</h1>
+        <button
+          onClick={() => openModal()}
+          className="flex items-center gap-2 bg-blue-600 text-white px-4 py-2 rounded-xl font-semibold text-sm active:bg-blue-700"
+        >
+          <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" />
+          </svg>
+          Ekle
+        </button>
       </div>
 
-      <div className="bg-white rounded-lg shadow-md overflow-hidden">
-        <table className="w-full">
-          <thead className="bg-gray-50">
-            <tr>
-              <th className="px-6 py-3 text-left text-xs font-semibold text-gray-700 uppercase">Resim</th>
-              <th className="px-6 py-3 text-left text-xs font-semibold text-gray-700 uppercase">Yazı</th>
-              <th className="px-6 py-3 text-left text-xs font-semibold text-gray-700 uppercase">Sıra</th>
-              <th className="px-6 py-3 text-left text-xs font-semibold text-gray-700 uppercase">İşlemler</th>
-            </tr>
-          </thead>
-          <tbody className="divide-y divide-gray-200">
-            {slides.map((slide) => (
-              <tr key={slide.id}>
-                <td className="px-6 py-4">
-                  <img
-                    src={slide.imageUrl}
-                    alt={slide.text}
-                    className="w-24 h-14 object-cover rounded"
-                  />
-                </td>
-                <td className="px-6 py-4 text-gray-900 font-medium">{slide.text}</td>
-                <td className="px-6 py-4 text-gray-700">{slide.order}</td>
-                <td className="px-6 py-4">
-                  <button onClick={() => openModal(slide)} className="text-blue-600 hover:text-blue-700 mr-4">
-                    Düzenle
-                  </button>
-                  <button
-                    onClick={() => setConfirmId(slide.id)}
-                    disabled={deletingId === slide.id}
-                    className="text-red-600 hover:text-red-700 disabled:opacity-50 inline-flex items-center gap-1"
-                  >
-                    {deletingId === slide.id ? (
-                      <>
-                        <svg className="animate-spin h-3.5 w-3.5" viewBox="0 0 24 24" fill="none">
-                          <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" />
-                          <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v8H4z" />
-                        </svg>
-                        Siliniyor...
-                      </>
-                    ) : 'Sil'}
-                  </button>
-                </td>
-              </tr>
-            ))}
-          </tbody>
-        </table>
-        {slides.length === 0 && (
-          <p className="text-center py-8 text-gray-600">Henüz slide bulunmamaktadır</p>
-        )}
-      </div>
+      {/* List */}
+      {slides.length === 0 ? (
+        <div className="bg-white rounded-xl p-10 text-center text-gray-400 text-sm">
+          Henüz slide bulunmamaktadır
+        </div>
+      ) : (
+        <div className="space-y-3">
+          {slides.map((slide) => (
+            <div key={slide.id} className="bg-white rounded-xl shadow-sm overflow-hidden flex items-stretch">
+              <img
+                src={slide.imageUrl}
+                alt={slide.text}
+                className="w-24 object-cover flex-shrink-0"
+              />
+              <div className="flex-1 px-3 py-3 min-w-0">
+                <p className="font-semibold text-gray-900 text-sm leading-tight truncate">{slide.text}</p>
+                <p className="text-xs text-gray-400 mt-1">Sıra: {slide.order}</p>
+              </div>
+              <div className="flex flex-col gap-1.5 p-2 flex-shrink-0 justify-center">
+                <button
+                  onClick={() => openModal(slide)}
+                  className="p-2 text-blue-600 bg-blue-50 rounded-lg active:bg-blue-100"
+                >
+                  <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
+                  </svg>
+                </button>
+                <button
+                  onClick={() => setConfirmId(slide.id)}
+                  disabled={deletingId === slide.id}
+                  className="p-2 text-red-500 bg-red-50 rounded-lg active:bg-red-100 disabled:opacity-40"
+                >
+                  {deletingId === slide.id ? <Spinner small /> : (
+                    <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+                    </svg>
+                  )}
+                </button>
+              </div>
+            </div>
+          ))}
+        </div>
+      )}
 
-      {/* Silme Onay Modalı */}
+      {/* Confirm */}
       {confirmId && (
         <ConfirmModal
           message={`"${slides.find((s) => s.id === confirmId)?.text}" slide'ını silmek istediğinizden emin misiniz?`}
@@ -177,80 +170,73 @@ export default function SlidesManagementPage() {
         />
       )}
 
-      {/* Modal */}
+      {/* Bottom Sheet Modal */}
       {showModal && (
-        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50">
-          <div className="bg-white rounded-lg p-6 max-w-md w-full">
-            <h2 className="text-2xl font-bold text-gray-900 mb-4">
+        <div className="fixed inset-0 z-50 flex flex-col justify-end">
+          <div className="absolute inset-0 bg-black/50" onClick={closeModal} />
+          <div className="relative bg-white rounded-t-2xl px-4 pt-4 pb-8 max-h-[92vh] overflow-y-auto safe-area-bottom">
+            <div className="w-10 h-1 bg-gray-300 rounded-full mx-auto mb-4" />
+            <h2 className="text-lg font-bold text-gray-900 mb-5">
               {editingSlide ? 'Slide Düzenle' : 'Yeni Slide Ekle'}
             </h2>
-
             <form onSubmit={handleSubmit}>
               <div className="space-y-4">
                 <div>
-                  <label className="block text-gray-800 font-semibold mb-2">Slide Yazısı</label>
+                  <label className="block text-sm font-semibold text-gray-700 mb-1.5">Slide Yazısı</label>
                   <input
                     type="text"
                     name="text"
                     defaultValue={editingSlide?.text}
                     required
-                    className="w-full px-4 py-2 border rounded-lg text-gray-900 focus:outline-none focus:ring-2 focus:ring-blue-600"
+                    className="w-full px-4 py-3 border border-gray-300 rounded-xl text-gray-900 text-base focus:outline-none focus:ring-2 focus:ring-blue-500"
                     placeholder="Slide üzerine yazılacak metin"
                   />
                 </div>
-
                 <div>
-                  <label className="block text-gray-800 font-semibold mb-2">Sıra No</label>
+                  <label className="block text-sm font-semibold text-gray-700 mb-1.5">Sıra No</label>
                   <input
                     type="number"
                     name="order"
                     defaultValue={editingSlide?.order ?? slides.length}
                     min={0}
-                    className="w-full px-4 py-2 border rounded-lg text-gray-900 focus:outline-none focus:ring-2 focus:ring-blue-600"
+                    className="w-full px-4 py-3 border border-gray-300 rounded-xl text-gray-900 text-base focus:outline-none focus:ring-2 focus:ring-blue-500"
                   />
                 </div>
-
                 <div>
-                  <label className="block text-gray-800 font-semibold mb-2">
-                    Slide Resmi {editingSlide && '(Değiştirmek için yeni resim seçin)'}
+                  <label className="block text-sm font-semibold text-gray-700 mb-1.5">
+                    Slide Resmi {editingSlide && <span className="font-normal text-gray-400">(değiştirmek için seçin)</span>}
                   </label>
                   <input
                     type="file"
                     accept="image/*"
                     onChange={handleFileChange}
                     required={!editingSlide}
-                    className="w-full px-4 py-2 border rounded-lg text-gray-900 focus:outline-none focus:ring-2 focus:ring-blue-600"
+                    className="w-full text-sm text-gray-500 file:mr-3 file:py-2 file:px-4 file:rounded-lg file:border-0 file:text-sm file:font-semibold file:bg-blue-50 file:text-blue-700"
                   />
-                  <p className="text-sm text-gray-600 mt-1">Maksimum dosya boyutu: 5MB</p>
+                  <p className="text-xs text-gray-400 mt-1">Maks. 5MB</p>
                 </div>
-
                 {previewUrl && (
-                  <div>
-                    <label className="block text-gray-800 font-semibold mb-2">Önizleme</label>
-                    <img src={previewUrl} alt="Preview" className="w-full h-40 object-cover rounded-lg" />
-                  </div>
+                  <img src={previewUrl} alt="Önizleme" className="w-full h-40 object-cover rounded-xl" />
                 )}
               </div>
-
-              {error && (
-                <div className="mt-4 p-3 bg-red-100 text-red-700 rounded-lg">{error}</div>
-              )}
-
-              <div className="flex gap-4 mt-6">
-                <Button type="submit" disabled={loading || uploading}>
-                  <span className="inline-flex items-center gap-2">
-                    {(loading || uploading) && (
-                      <svg className="animate-spin h-4 w-4" viewBox="0 0 24 24" fill="none">
-                        <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" />
-                        <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v8H4z" />
-                      </svg>
-                    )}
-                    {uploading ? 'Yükleniyor...' : loading ? 'Kaydediliyor...' : 'Kaydet'}
-                  </span>
-                </Button>
-                <Button type="button" variant="secondary" onClick={closeModal} disabled={loading || uploading}>
+              {error && <p className="mt-4 p-3 bg-red-50 text-red-600 rounded-xl text-sm">{error}</p>}
+              <div className="flex gap-3 mt-6">
+                <button
+                  type="submit"
+                  disabled={loading || uploading}
+                  className="flex-1 bg-blue-600 text-white py-3 rounded-xl font-semibold text-base disabled:opacity-60 flex items-center justify-center gap-2"
+                >
+                  {(loading || uploading) && <Spinner />}
+                  {uploading ? 'Yükleniyor...' : loading ? 'Kaydediliyor...' : 'Kaydet'}
+                </button>
+                <button
+                  type="button"
+                  onClick={closeModal}
+                  disabled={loading || uploading}
+                  className="flex-1 bg-gray-100 text-gray-700 py-3 rounded-xl font-semibold text-base"
+                >
                   İptal
-                </Button>
+                </button>
               </div>
             </form>
           </div>

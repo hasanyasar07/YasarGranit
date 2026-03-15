@@ -88,7 +88,7 @@ export async function getCategories() {
   try {
     const categories = await prisma.category.findMany({
       orderBy: {
-        name: 'asc',
+        createdAt: 'asc',
       },
     })
     return categories

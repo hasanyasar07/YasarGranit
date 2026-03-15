@@ -9,7 +9,7 @@ export default function IletisimPage() {
       <p className="text-xs font-semibold uppercase tracking-widest text-stone-400 mb-1">Bize Ulaşın</p>
       <h1 className="text-2xl md:text-3xl font-bold text-gray-900 mb-8">İletişim</h1>
 
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
         {/* Telefon */}
         <div className="bg-stone-50 rounded-2xl p-6 flex flex-col gap-4">
           <div className="flex items-center gap-3">
@@ -28,6 +28,21 @@ export default function IletisimPage() {
               0536 522 82 61
             </a>
           </div>
+        </div>
+
+        {/* E-posta */}
+        <div className="bg-stone-50 rounded-2xl p-6 flex flex-col gap-4">
+          <div className="flex items-center gap-3">
+            <div className="bg-stone-200 rounded-full p-2">
+              <svg className="w-5 h-5 text-stone-700" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
+              </svg>
+            </div>
+            <h2 className="font-semibold text-gray-900">E-posta</h2>
+          </div>
+          <a href="mailto:yasar07600@gmail.com" className="text-gray-700 hover:text-stone-900 font-medium transition-colors">
+            yasar07600@gmail.com
+          </a>
         </div>
 
         {/* Adres */}
