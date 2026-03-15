@@ -52,7 +52,7 @@ export default function ProductDetail({ product, whatsappLink, showWhatsapp, orn
   function onTouchEnd(e: React.TouchEvent) {
     if (touchStart === null) return
     const diff = touchStart - e.changedTouches[0].clientX
-    if (Math.abs(diff) > 50) diff > 0 ? next() : prev()
+    if (Math.abs(diff) > 50) { if (diff > 0) next(); else prev() }
     setTouchStart(null)
   }
 
@@ -182,7 +182,7 @@ export default function ProductDetail({ product, whatsappLink, showWhatsapp, orn
             >
               &times;
             </button>
-            <img
+            <img  // eslint-disable-line @next/next/no-img-element
               src={product.imageUrl}
               alt={product.name}
               className="max-w-full max-h-[85vh] object-contain rounded-xl mx-auto block"

@@ -1,6 +1,7 @@
 import { getProducts } from '@/actions/product'
 import { getCategories } from '@/actions/category'
 import Link from 'next/link'
+import Image from 'next/image'
 
 export default async function DashboardPage() {
   const products = await getProducts()
@@ -97,9 +98,11 @@ export default async function DashboardPage() {
               key={product.id}
               className={`flex items-center gap-3 p-3 ${idx < Math.min(products.length, 5) - 1 ? 'border-b border-gray-100' : ''}`}
             >
-              <img
+              <Image
                 src={product.imageUrl}
                 alt={product.name}
+                width={48}
+                height={48}
                 className="w-12 h-12 rounded-lg object-cover flex-shrink-0"
               />
               <div className="flex-1 min-w-0">
