@@ -49,17 +49,21 @@ export default function HeroSlider({ slides }: { slides: Slide[] }) {
         <>
           <button
             onClick={() => setCurrent((p) => (p - 1 + slides.length) % slides.length)}
-            className="absolute left-3 top-1/2 -translate-y-1/2 bg-white/20 hover:bg-white/40 backdrop-blur-sm text-white rounded-full w-9 h-9 flex items-center justify-center transition-colors z-10 text-xl"
+            className="absolute left-3 top-1/2 -translate-y-1/2 bg-white/20 active:bg-white/50 backdrop-blur-sm text-white rounded-full w-12 h-12 flex items-center justify-center transition-colors z-10"
             aria-label="Önceki"
           >
-            ‹
+            <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M15 19l-7-7 7-7" />
+            </svg>
           </button>
           <button
             onClick={next}
-            className="absolute right-3 top-1/2 -translate-y-1/2 bg-white/20 hover:bg-white/40 backdrop-blur-sm text-white rounded-full w-9 h-9 flex items-center justify-center transition-colors z-10 text-xl"
+            className="absolute right-3 top-1/2 -translate-y-1/2 bg-white/20 active:bg-white/50 backdrop-blur-sm text-white rounded-full w-12 h-12 flex items-center justify-center transition-colors z-10"
             aria-label="Sonraki"
           >
-            ›
+            <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M9 5l7 7-7 7" />
+            </svg>
           </button>
 
           <div className="absolute bottom-4 left-0 right-0 flex justify-center gap-2 z-10">
