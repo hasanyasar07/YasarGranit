@@ -12,8 +12,23 @@ export async function generateMetadata({ params }: { params: Promise<{ id: strin
   if (!product) return { title: 'Ürün Bulunamadı - Yaşar Granit' }
 
   return {
-    title: `${product.name} - Yaşar Granit`,
-    description: `${product.name} - ${product.category.name}`,
+    title: `${product.name} - ${product.category.name} | Yaşar Granit Manavgat`,
+    description: `Manavgat Yaşar Granit'ten ${product.name} (${product.category.name}). Antalya ve Manavgat bölgesine teslim. Fiyat almak için WhatsApp ile ulaşın.`,
+    keywords: [
+      product.name,
+      product.category.name,
+      `${product.name} manavgat`,
+      `${product.name} antalya`,
+      `${product.category.name} fiyat`,
+    ],
+    alternates: {
+      canonical: `https://yasargranit.com/products/${product.id}`,
+    },
+    openGraph: {
+      title: `${product.name} - ${product.category.name} | Yaşar Granit`,
+      description: `Manavgat Yaşar Granit'ten ${product.name}. Fiyat almak için iletişime geçin.`,
+      images: product.imageUrl ? [{ url: product.imageUrl, alt: product.name }] : [],
+    },
   }
 }
 

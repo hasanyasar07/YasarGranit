@@ -1,6 +1,16 @@
 export const metadata = {
-  title: 'İletişim - Yaşar Granit',
-  description: 'Yaşar Granit iletişim bilgileri ve konum.',
+  title: 'İletişim - Manavgat Granit ve Mermer | Yaşar Granit',
+  description:
+    'Yaşar Granit iletişim bilgileri. Manavgat, Antalya bölgesinde granit, mermer ve mermerit için bizi arayın. Alanya Yolu Üzeri Ulualan Mevkii No: 42/1 Manavgat/Antalya.',
+  keywords: [
+    'yaşar granit iletişim',
+    'manavgat granit telefon',
+    'manavgat mermer firma',
+    'antalya granit satış',
+  ],
+  alternates: {
+    canonical: 'https://yasargranit.com/iletisim',
+  },
 }
 
 export default function IletisimPage() {

@@ -4,8 +4,18 @@ import Link from 'next/link'
 import OrnekUrunlerGrid from '@/components/OrnekUrunlerGrid'
 
 export const metadata = {
-  title: 'Örnek Ürünler - Yaşar Granit',
-  description: 'Gerçekleştirdiğimiz çalışmalar ve örnek ürünlerimiz.',
+  title: 'Referans Çalışmalarımız - Granit ve Mermer Örnekleri | Yaşar Granit',
+  description:
+    'Manavgat Yaşar Granit olarak tamamladığımız granit, mermer ve mermerit projelerinden örnekler. Gerçek müşteri fotoğrafları ile kalitemizi görün.',
+  keywords: [
+    'granit uygulama örnekleri',
+    'mermer döşeme örnekleri',
+    'mermerit kaplama referanslar',
+    'manavgat taş uygulama',
+  ],
+  alternates: {
+    canonical: 'https://yasargranit.com/ornek-urunler',
+  },
 }
 
 export default async function OrnekUrunlerPage({

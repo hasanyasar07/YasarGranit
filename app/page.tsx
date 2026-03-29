@@ -1,8 +1,18 @@
+import type { Metadata } from 'next'
 import Link from 'next/link'
 import { getProducts } from '@/actions/product'
 import { getSlides } from '@/actions/slide'
 import ProductCard from '@/components/ProductCard'
 import HeroSlider from '@/components/HeroSlider'
+
+export const metadata: Metadata = {
+  title: "Yaşar Granit | Manavgat Mermer, Mermerit ve Granit Ürünleri",
+  description:
+    "Manavgat ve Antalya bölgesinde 1999'dan bu yana granit, mermer, mermerit ve çimstone ürünleri sunuyoruz. Granit tezgah, mermer döşeme, taş kaplama için hemen iletişime geçin.",
+  alternates: {
+    canonical: "https://yasargranit.com",
+  },
+}
 
 export default async function HomePage() {
   const [products, slides] = await Promise.all([getProducts(), getSlides()])
@@ -49,10 +59,17 @@ export default async function HomePage() {
       <section className="max-w-6xl mx-auto px-4 py-10 md:py-16">
         <div className="bg-stone-50 rounded-2xl p-6 md:p-10">
           <p className="text-xs font-semibold uppercase tracking-widest text-stone-400 mb-2">Hakkımızda</p>
+          <h2 className="text-xl md:text-2xl font-bold text-gray-900 mb-4">
+            Manavgat&apos;ın Güvenilir Granit, Mermer ve Mermerit Firması
+          </h2>
           <ul className="space-y-3 text-gray-700 text-sm md:text-base leading-relaxed">
             <li className="flex items-start gap-2">
               <span className="mt-1.5 w-1.5 h-1.5 rounded-full bg-amber-500 shrink-0" />
-              1999 yılından bu yana mermerit, granit ve çimstone ürünlerimizle müşterilerimize kaliteli ve güvenilir hizmet sunmaktayız.
+              1999 yılından bu yana Manavgat ve Antalya bölgesinde mermerit, granit ve çimstone ürünlerimizle müşterilerimize kaliteli ve güvenilir hizmet sunmaktayız.
+            </li>
+            <li className="flex items-start gap-2">
+              <span className="mt-1.5 w-1.5 h-1.5 rounded-full bg-amber-500 shrink-0" />
+              Granit tezgah, mermer döşeme, mermerit kaplama ve çimstone uygulamalarında Antalya&apos;nın en deneyimli ekibiyle yanınızdayız.
             </li>
             <li className="flex items-start gap-2">
               <span className="mt-1.5 w-1.5 h-1.5 rounded-full bg-amber-500 shrink-0" />

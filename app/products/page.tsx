@@ -4,8 +4,20 @@ import ProductCard from '@/components/ProductCard'
 import Link from 'next/link'
 
 export const metadata = {
-  title: 'Ürünlerimiz - Yaşar Granit',
-  description: 'Geniş ürün yelpazemizi keşfedin. Doğal taş ve granit ürünleri.',
+  title: 'Granit, Mermer ve Mermerit Ürünleri | Yaşar Granit',
+  description:
+    'Manavgat Yaşar Granit ürün kataloğu. Granit tezgah, mermer döşeme, mermerit kaplama ve çimstone ürünleri. Antalya bölgesi için ücretsiz keşif.',
+  keywords: [
+    'granit tezgah manavgat',
+    'mermer döşeme antalya',
+    'mermerit kaplama',
+    'çimstone ürünleri',
+    'doğal taş fiyatları',
+    'granit çeşitleri',
+  ],
+  alternates: {
+    canonical: 'https://yasargranit.com/products',
+  },
 }
 
 export default async function ProductsPage({
