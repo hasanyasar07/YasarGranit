@@ -1,3 +1,5 @@
+import GoogleReviewQR from '@/components/GoogleReviewQR'
+
 export const metadata = {
   title: 'İletişim - Manavgat Granit ve Mermer | Yaşar Granit',
   description:
@@ -109,6 +111,11 @@ export default function IletisimPage() {
           referrerPolicy="no-referrer-when-downgrade"
           title="Yaşar Granit Konum"
         />
+      </div>
+
+      {/* Google Yorum QR */}
+      <div className="mt-4">
+        <GoogleReviewQR />
       </div>
     </div>
   )
