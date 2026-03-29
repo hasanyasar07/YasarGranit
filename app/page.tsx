@@ -8,7 +8,7 @@ import HeroSlider from '@/components/HeroSlider'
 export const metadata: Metadata = {
   title: "Yaşar Granit | Manavgat Mermer, Mermerit ve Granit Ürünleri",
   description:
-    "Manavgat ve Antalya bölgesinde 1999'dan bu yana granit, mermer, mermerit ve çimstone ürünleri sunuyoruz. Granit tezgah, mermer döşeme, taş kaplama için hemen iletişime geçin.",
+    "Manavgat ve Antalya bölgesinde 1999'dan bu yana granit, mermerit coante ve  çimstone ürünleri sunuyoruz. Her türlü tezgah için hemen iletişime geçin.",
   alternates: {
     canonical: "https://yasargranit.com",
   },
