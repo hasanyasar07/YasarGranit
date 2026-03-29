@@ -72,6 +72,10 @@ export const metadata: Metadata = {
       "max-snippet": -1,
     },
   },
+  icons: {
+    icon: "/favicon.jpg",
+    apple: "/favicon.jpg",
+  },
   verification: {
     google: "clqxpFzfZqjDQmyk5AQcKhqp3Sz3zOy_7LoqaoFQbg0",
   },
