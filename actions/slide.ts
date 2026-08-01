@@ -22,7 +22,7 @@ export async function createSlide(imageUrl: string, text: string, order: number)
 
   try {
     await prisma.slide.create({ data: { imageUrl, text, order } })
-    revalidatePath('/')
+    revalidatePath('/', 'layout')
     return { success: true }
   } catch {
     return { error: 'Slide oluşturulurken bir hata oluştu' }
@@ -42,7 +42,7 @@ export async function updateSlide(id: string, text: string, order: number, image
     }
 
     await prisma.slide.update({ where: { id }, data })
-    revalidatePath('/')
+    revalidatePath('/', 'layout')
     return { success: true }
   } catch {
     return { error: 'Slide güncellenirken bir hata oluştu' }
@@ -57,7 +57,7 @@ export async function deleteSlide(id: string) {
     const slide = await prisma.slide.findUnique({ where: { id } })
     await prisma.slide.delete({ where: { id } })
     if (slide?.imageUrl) await deleteImage(slide.imageUrl)
-    revalidatePath('/')
+    revalidatePath('/', 'layout')
     return { success: true }
   } catch {
     return { error: 'Slide silinirken bir hata oluştu' }

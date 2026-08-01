@@ -35,8 +35,7 @@ export async function createProduct(name: string, categoryId: string, imageUrl: 
       },
     })
 
-    revalidatePath('/products')
-    revalidatePath('/admin/dashboard')
+    revalidatePath('/', 'layout')
     return { success: true }
   } catch (error) {
     console.error('Ürün oluşturma hatası:', error)
@@ -78,8 +77,7 @@ export async function updateProduct(id: string, name: string, categoryId: string
       data: updateData,
     })
 
-    revalidatePath('/products')
-    revalidatePath('/admin/dashboard')
+    revalidatePath('/', 'layout')
     return { success: true }
   } catch (error) {
     console.error('Ürün güncelleme hatası:', error)
@@ -98,8 +96,7 @@ export async function deleteProduct(id: string) {
     await prisma.product.delete({ where: { id } })
     if (product?.imageUrl) await deleteImage(product.imageUrl)
 
-    revalidatePath('/products')
-    revalidatePath('/admin/dashboard')
+    revalidatePath('/', 'layout')
     return { success: true }
   } catch (error) {
     return { error: 'Ürün silinirken bir hata oluştu' }
@@ -112,8 +109,7 @@ export async function toggleFavori(id: string, favori: boolean) {
 
   try {
     await prisma.product.update({ where: { id }, data: { favori } })
-    revalidatePath('/')
-    revalidatePath('/admin/dashboard')
+    revalidatePath('/', 'layout')
     return { success: true }
   } catch {
     return { error: 'Güncelleme başarısız' }

@@ -33,8 +33,7 @@ export async function createOrnekUrun(productId: string, imageUrl: string) {
 
   try {
     await prisma.ornekUrun.create({ data: { productId, imageUrl } })
-    revalidatePath('/ornek-urunler')
-    revalidatePath(`/products/${productId}`)
+    revalidatePath('/', 'layout')
     return { success: true }
   } catch {
     return { error: 'Örnek ürün oluşturulurken bir hata oluştu' }
@@ -49,8 +48,7 @@ export async function deleteOrnekUrun(id: string) {
     const item = await prisma.ornekUrun.findUnique({ where: { id } })
     await prisma.ornekUrun.delete({ where: { id } })
     if (item?.imageUrl) await deleteImage(item.imageUrl)
-    revalidatePath('/ornek-urunler')
-    if (item) revalidatePath(`/products/${item.productId}`)
+    revalidatePath('/', 'layout')
     return { success: true }
   } catch {
     return { error: 'Örnek ürün silinirken bir hata oluştu' }

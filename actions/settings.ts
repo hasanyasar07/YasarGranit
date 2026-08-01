@@ -49,8 +49,7 @@ export async function updateSiteSettings(formData: FormData) {
       })
     }
 
-    revalidatePath('/admin/dashboard')
-    revalidatePath('/products')
+    revalidatePath('/', 'layout')
     return { success: true }
   } catch (error) {
     return { error: 'Ayarlar güncellenirken bir hata oluştu' }

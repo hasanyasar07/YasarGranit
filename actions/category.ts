@@ -28,7 +28,7 @@ export async function createCategory(formData: FormData) {
       },
     })
 
-    revalidatePath('/admin/dashboard')
+    revalidatePath('/', 'layout')
     return { success: true }
   } catch (error) {
     return { error: 'Kategori oluşturulurken bir hata oluştu' }
@@ -59,7 +59,7 @@ export async function updateCategory(id: string, formData: FormData) {
       },
     })
 
-    revalidatePath('/admin/dashboard')
+    revalidatePath('/', 'layout')
     return { success: true }
   } catch (error) {
     return { error: 'Kategori güncellenirken bir hata oluştu' }
@@ -77,7 +77,7 @@ export async function deleteCategory(id: string) {
       where: { id },
     })
 
-    revalidatePath('/admin/dashboard')
+    revalidatePath('/', 'layout')
     return { success: true }
   } catch (error) {
     return { error: 'Kategori silinirken bir hata oluştu' }
