@@ -3,6 +3,7 @@ import { Montserrat } from "next/font/google";
 import "./globals.css";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
+import { getSiteSettings } from "@/actions/settings";
 
 const montserrat = Montserrat({ subsets: ["latin"], weight: ["400", "500", "600", "700", "800"] });
 
@@ -81,11 +82,21 @@ export const metadata: Metadata = {
   },
 };
 
-export default function RootLayout({
+export default async function RootLayout({
   children,
 }: Readonly<{
   children: React.ReactNode;
 }>) {
+  const settings = await getSiteSettings();
+
+  // sameAs: AI motorları ve arama motorları varlık doğrulaması için bu alanı
+  // kullanır — aynı işletmenin farklı platformlardaki profillerini bağlar.
+  const sameAs = [
+    settings?.instagramUrl,
+    settings?.facebookUrl,
+    settings?.twitterUrl,
+  ].filter((url): url is string => !!url);
+
   return (
     <html lang="tr">
       <body className={`${montserrat.className} flex flex-col min-h-screen bg-white`}>
@@ -100,6 +111,7 @@ export default function RootLayout({
             __html: JSON.stringify({
               "@context": "https://schema.org",
               "@type": "LocalBusiness",
+              "@id": `${siteUrl}/#business`,
               name: "Yaşar Granit",
               description:
                 "Manavgat ve Antalya'nın güvenilir granit, mermer ve mermerit firması. 1999'dan bu yana kaliteli doğal taş ürünleri.",
@@ -133,11 +145,25 @@ export default function RootLayout({
                   closes: "18:00",
                 },
               ],
-              sameAs: [],
+              sameAs,
               image: `${siteUrl}/logo.png`,
               priceRange: "$$",
-              servesCuisine: undefined,
               hasMap: "https://www.google.com/maps/place/Ya%C5%9Far+Granit",
+              foundingDate: "1999",
+              areaServed: [
+                { "@type": "City", name: "Manavgat" },
+                { "@type": "City", name: "Antalya" },
+                { "@type": "AdministrativeArea", name: "Antalya" },
+              ],
+              knowsAbout: [
+                "Granit tezgah",
+                "Mermer döşeme",
+                "Mermerit kaplama",
+                "Çimstone uygulamaları",
+                "Doğal taş işleme",
+                "Mutfak tezgahı",
+                "Banyo tezgahı",
+              ],
             }),
           }}
         />

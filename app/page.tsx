@@ -14,12 +14,52 @@ export const metadata: Metadata = {
   },
 }
 
+// Tek kaynak: hem görünür SSS bölümü hem FAQPage şeması bunu kullanır.
+// Şemadaki cevap sayfada görünmüyorsa Google bunu ihlal sayar, o yüzden
+// ikisini ayrı ayrı yazmıyoruz.
+const faq = [
+  {
+    q: 'Hangi bölgelere hizmet veriyorsunuz?',
+    a: 'Manavgat merkez olmak üzere Antalya ili ve çevre ilçelere granit, mermer, mermerit ve çimstone üretim ile montaj hizmeti veriyoruz.',
+  },
+  {
+    q: 'Fiyatlarınızı nasıl öğrenebilirim?',
+    a: 'Fiyatlar ölçü, malzeme ve uygulama detayına göre değiştiği için sabit liste yayınlamıyoruz. 0533 731 18 46 numarasından telefon veya WhatsApp ile ulaşarak ücretsiz keşif ve fiyat teklifi alabilirsiniz.',
+  },
+  {
+    q: 'Mutfak tezgahı için hangi malzemeyi seçmeliyim?',
+    a: 'Granit yüksek ısı ve çizilme direnci ile yoğun kullanılan mutfaklar için uygundur. Çimstone homojen görünüm ve leke tutmayan yüzey sunar. Mermer estetik açıdan öne çıkar ancak asitli sıvılara karşı daha hassastır. Kullanım alışkanlığınıza göre ekibimiz uygun olanı önerir.',
+  },
+  {
+    q: 'Ölçü ve montaj hizmeti veriyor musunuz?',
+    a: 'Evet. Yerinde ölçü alımı, kesim, işleme ve montaj sürecinin tamamını kendi ekibimizle yapıyoruz.',
+  },
+  {
+    q: 'Ne zamandan beri faaliyet gösteriyorsunuz?',
+    a: '1999 yılından bu yana Manavgat ve Antalya bölgesinde doğal taş sektöründe faaliyet gösteriyoruz.',
+  },
+]
+
 export default async function HomePage() {
   const [products, slides] = await Promise.all([getProducts(), getSlides()])
   const featuredProducts = products.filter((p) => p.favori)
 
+  const faqSchema = {
+    '@context': 'https://schema.org',
+    '@type': 'FAQPage',
+    mainEntity: faq.map((item) => ({
+      '@type': 'Question',
+      name: item.q,
+      acceptedAnswer: { '@type': 'Answer', text: item.a },
+    })),
+  }
+
   return (
     <div>
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(faqSchema) }}
+      />
       <HeroSlider slides={slides} />
 
       {/* Öne Çıkan Ürünler */}
@@ -80,6 +120,41 @@ export default async function HomePage() {
               Kalite, güven ve estetik anlayışımızla yaşam alanlarınıza değer katmaya devam ediyoruz.
             </li>
           </ul>
+        </div>
+      </section>
+
+      {/* Sıkça Sorulan Sorular */}
+      <section className="max-w-6xl mx-auto px-4 pb-10 md:pb-16">
+        <p className="text-xs font-semibold uppercase tracking-widest text-stone-400 mb-2">
+          Sıkça Sorulan Sorular
+        </p>
+        <h2 className="text-xl md:text-2xl font-bold text-gray-900 mb-6">
+          Merak Edilenler
+        </h2>
+        <div className="space-y-3">
+          {faq.map((item) => (
+            <details
+              key={item.q}
+              className="group bg-white border border-gray-100 rounded-2xl shadow-sm overflow-hidden"
+            >
+              <summary className="flex items-center justify-between gap-3 px-5 py-4 cursor-pointer list-none">
+                <h3 className="text-sm md:text-base font-semibold text-gray-900">
+                  {item.q}
+                </h3>
+                <svg
+                  className="w-4 h-4 text-gray-400 shrink-0 transition-transform group-open:rotate-180"
+                  fill="none"
+                  stroke="currentColor"
+                  viewBox="0 0 24 24"
+                >
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+                </svg>
+              </summary>
+              <p className="px-5 pb-4 text-sm md:text-base text-gray-700 leading-relaxed">
+                {item.a}
+              </p>
+            </details>
+          ))}
         </div>
       </section>
     </div>
